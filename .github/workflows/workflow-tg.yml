@@ -1,0 +1,22 @@
+name: Analitics code
+
+on:
+  push:
+    branches: ["main", "dev"]
+  pull-request:
+    breanches: ["main", "dev"]
+
+jobs:
+  linter:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install dependecies
+        uses: actions/checkout@v4
+      - name: Install python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+      - name: Install depedencies for python
+        run: pip3 install flake8
+      - name: Check code
+        run: flake8 .

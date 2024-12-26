@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "adapticbot"
+version = "0.1.0"
+description = "This bot company for help study new employes"
+authors = ["darkfos82 <darkfos82@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+aiogram = "^3.16.0"
+python-dotenv = "^1.0.1"
+pydantic = "^2.10.4"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
