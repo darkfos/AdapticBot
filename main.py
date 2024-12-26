@@ -1,2 +1,9 @@
+import asyncio
+
+
+from src import TelegramBot
+
+
 if __name__ == "__main__":
-    pass
+    bot = TelegramBot()
+    asyncio.run(bot.start_bot())
