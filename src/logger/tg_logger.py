@@ -1,5 +1,6 @@
 import logging
 from logging import Logger
+from typing import Dict
 
 
 class TGLogger:
@@ -12,3 +13,7 @@ class TGLogger:
     @classmethod
     def get_logger(cls) -> Logger:
         return cls.__logger
+
+    @classmethod
+    def get_config(cls) -> Dict[str, str]:
+        return {"tg_id": "<TG-ID>"}

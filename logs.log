@@ -1,0 +1,6 @@
+INFO:aiogram.dispatcher:Start polling
+INFO:aiogram.dispatcher:Run polling for bot @adaptics_bot id=7758388126 - 'AdapticsBot'
+INFO:aiogram.event:Update id=469498004 is handled. Duration 279 ms by bot id=7758388126
+WARNING:aiogram.dispatcher:Received SIGINT signal
+INFO:aiogram.dispatcher:Polling stopped for bot @adaptics_bot id=7758388126 - 'AdapticsBot'
+INFO:aiogram.dispatcher:Polling stopped
