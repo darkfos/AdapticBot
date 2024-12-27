@@ -3,5 +3,6 @@ from typing import Final
 
 
 class ErrosTextEnum(Enum):
-    SPAM_ERROR: Final[str] = "Вы превысили лимит сообщений! Пожалуйста подождите..."
-    
+    SPAM_ERROR: Final[str] = (
+        "Вы превысили лимит сообщений! Пожалуйста подождите..."  # noqa
+    )

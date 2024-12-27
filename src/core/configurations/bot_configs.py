@@ -42,9 +42,14 @@ async def set_my_commands(bot: Bot) -> None:
     :return:
     """
 
-    await bot(SetMyCommands(commands=[
-        BotCommand(
-            command=command_desc.split(" - ")[0], description=command_desc.split(" - ")[1]
+    await bot(
+        SetMyCommands(
+            commands=[
+                BotCommand(
+                    command=command_desc.split(" - ")[0],
+                    description=command_desc.split(" - ")[1],
+                )
+                for command_desc in ConfigurationTextEnum.COMMANDS_LIST.value
+            ]
         )
-        for command_desc in ConfigurationTextEnum.COMMANDS_LIST.value
-    ]))
+    )

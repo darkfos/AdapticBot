@@ -23,7 +23,7 @@ async def start_command(message: Message) -> None:
 async def help_command(message: Message) -> None:
     await message.answer(
         text=CommandsTextsEnum.HELP_COMMAND_MESSAGE.value,
-        parse_mode=gs.PARS_MODE.value
+        parse_mode=gs.PARS_MODE.value,  # noqa
     )
 
 
@@ -31,7 +31,7 @@ async def help_command(message: Message) -> None:
 async def info_command(message: Message) -> None:
     await message.answer(
         text=CommandsTextsEnum.INFO_COMMAND_MESSAGE.value,
-        parse_mode=gs.PARS_MODE.value
+        parse_mode=gs.PARS_MODE.value,  # noqa
     )
 
 
@@ -39,7 +39,7 @@ async def info_command(message: Message) -> None:
 async def memo_command(message: Message) -> None:
     await message.answer(
         text=CommandsTextsEnum.MEMO_COMMAND_MESSAGE.value,
-        parse_mode=gs.PARS_MODE.value
+        parse_mode=gs.PARS_MODE.value,  # noqa
     )
 
 
@@ -48,5 +48,5 @@ async def clear_command(message: Message, state: FSMContext) -> None:
     await state.clear()
     await message.answer(
         text=CommandsTextsEnum.CLEAR_COMMAND_MESSAGE.value,
-        parse_mode=gs.PARS_MODE.value
+        parse_mode=gs.PARS_MODE.value,
     )

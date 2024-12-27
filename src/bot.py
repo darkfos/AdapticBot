@@ -7,7 +7,7 @@ from src.core.routers import command_router
 from src.core.configurations import (
     set_description_on_bot,
     set_my_short_description_on_bot,
-    set_my_commands
+    set_my_commands,
 )
 from src.core.middleware import SpamMiddleware
 from src.core.configurations import BotGeneralSettings as gs
@@ -19,8 +19,7 @@ class TelegramBot:
         self.__bot: Bot = Bot(token=TelegramBotSettings().telegram_bot_token)
         self.storage = MemoryStorage()
         self.__dispatcher: Dispatcher = Dispatcher(
-            storage=self.storage,
-            fsm_strategy=gs.STRATEGY
+            storage=self.storage, fsm_strategy=gs.STRATEGY
         )
 
     async def include_dep(self) -> None:
@@ -29,7 +28,9 @@ class TelegramBot:
         :return:
         """
 
-        self.__dispatcher.message.middleware.register(SpamMiddleware(seconds=0.3))
+        self.__dispatcher.message.middleware.register(
+            SpamMiddleware(seconds=0.3)
+        )  # noqa
         self.__dispatcher.include_router(router=command_router)
 
     async def set_configs(self) -> None:

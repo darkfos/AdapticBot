@@ -15,5 +15,5 @@ class ConfigurationTextEnum(Enum):
         "/info - Информация",
         "/memo - Памятка сотрудника",
         "/help -  Помощь",
-        "/clear - Очистка"
+        "/clear - Очистка",
     ]

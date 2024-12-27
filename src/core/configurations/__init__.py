@@ -10,5 +10,5 @@ __all__: list[str] = [
     "set_description_on_bot",
     "set_my_short_description_on_bot",
     "set_my_commands",
-    "BotGeneralSettings"
+    "BotGeneralSettings",
 ]  # noqa
