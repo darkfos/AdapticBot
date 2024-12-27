@@ -6,6 +6,7 @@ from src.core.routers import command_router
 from src.core.configurations import (
     set_description_on_bot,
     set_my_short_description_on_bot,
+    set_my_commands
 )
 
 
@@ -31,6 +32,7 @@ class TelegramBot:
 
         await set_description_on_bot(self.__bot)
         await set_my_short_description_on_bot(self.__bot)
+        await set_my_commands(self.__bot)
 
     async def start_bot(self) -> None:
         """
