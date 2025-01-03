@@ -66,9 +66,8 @@ async def set_chat_menu_buttons(bot: Bot) -> None:
 
     await bot(
         SetChatMenuButton(
-            chat_id=None,
-            menu_button=MenuButtonCommands(text="Начать")
-        )
+            chat_id=None, menu_button=MenuButtonCommands(text="Начать")
+        )  # noqa
     )
 
 
@@ -79,8 +78,4 @@ async def set_bot_name(bot: Bot) -> None:
     :return:
     """
 
-    await bot(
-        SetMyName(
-            name=ConfigurationTextEnum.BOT_NAME.value
-        )
-    )
+    await bot(SetMyName(name=ConfigurationTextEnum.BOT_NAME.value))

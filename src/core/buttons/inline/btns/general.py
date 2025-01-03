@@ -1,8 +1,4 @@
 from aiogram.utils.keyboard import InlineKeyboardBuilder, InlineKeyboardButton
-import typing
-
-
-from src.enums.texts.commands import CommandsTextsEnum as cte
 
 
 class GeneralInlineButton:
@@ -14,7 +10,9 @@ class GeneralInlineButton:
             InlineKeyboardButton(text="🆘 Помощь", callback_data="/help"),
         )
         builder.row(
-            InlineKeyboardButton(text="ℹ️ Краткая информация", callback_data="/info"),
+            InlineKeyboardButton(
+                text="ℹ️ Краткая информация", callback_data="/info"
+            ),  # noqa
         )
         builder.row(
             InlineKeyboardButton(text="📙 Памятка", callback_data="/memo"),
@@ -26,5 +24,5 @@ class GeneralInlineButton:
         builder: InlineKeyboardBuilder = InlineKeyboardBuilder()
         builder.add(
             InlineKeyboardButton(text="🔙 Обратно", callback_data="/back")
-        )
+        )  # noqa
         return builder.as_markup()

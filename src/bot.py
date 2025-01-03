@@ -10,7 +10,7 @@ from src.core.configurations import (
     set_my_short_description_on_bot,
     set_my_commands,
     set_chat_menu_buttons,
-    set_bot_name
+    set_bot_name,
 )
 from src.core.middleware import SpamMiddleware
 from src.core.configurations import BotGeneralSettings as gs
@@ -21,7 +21,7 @@ class TelegramBot:
     def __init__(self) -> None:
         self.__bot: Bot = Bot(
             token=TelegramBotSettings().telegram_bot_token,
-            default=DefaultBotProperties(parse_mode=gs.PARS_MODE.value)
+            default=DefaultBotProperties(parse_mode=gs.PARS_MODE.value),
         )
         self.storage = MemoryStorage()
         self.__dispatcher: Dispatcher = Dispatcher(
