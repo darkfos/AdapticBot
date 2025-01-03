@@ -3,7 +3,7 @@ from aiogram.methods import (
     SetMyShortDescription,
     SetMyCommands,
     SetChatMenuButton,
-    SetMyName,
+    SetMyName
 )
 from aiogram.types import MenuButtonCommands
 from aiogram.types.bot_command import BotCommand

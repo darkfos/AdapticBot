@@ -1,5 +1,6 @@
 from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
+from aiogram.exceptions import TelegramRetryAfter
 from aiogram.fsm.storage.memory import MemoryStorage
 
 
@@ -45,11 +46,14 @@ class TelegramBot:
         :return:
         """
 
-        await set_description_on_bot(self.__bot)
-        await set_my_short_description_on_bot(self.__bot)
-        await set_my_commands(self.__bot)
-        await set_chat_menu_buttons(self.__bot)
-        await set_bot_name(self.__bot)
+        try:
+            await set_description_on_bot(self.__bot)
+            await set_my_short_description_on_bot(self.__bot)
+            await set_my_commands(self.__bot)
+            await set_chat_menu_buttons(self.__bot)
+            await set_bot_name(self.__bot)
+        except TelegramRetryAfter:
+            pass
 
     async def start_bot(self) -> None:
         """

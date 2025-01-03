@@ -1,12 +1,12 @@
 from aiogram import Router
 from aiogram.filters import CommandStart, Command  # noqa
 from aiogram.methods import EditMessageText, AnswerCallbackQuery
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove
 from aiogram.fsm.context import FSMContext
 from aiogram import F
 from typing import Union
 
-
+from src.core.buttons.reply import ReplyButtonFabric
 from src.enums import CommandsTextsEnum
 
 # BUTTONS
@@ -18,16 +18,19 @@ command_router: Router = Router(name="commands")
 
 @command_router.message(CommandStart())
 async def start_command(message: Message) -> None:
-    await message.answer(
+    start_message = await message.answer(
         text=CommandsTextsEnum.START_COMMAND_MESSAGE.value,
         reply_markup=await InlineButtonFabric.build_buttons("general"),
     )
+
+    await message.chat.pin_message(start_message.message_id)
 
 
 @command_router.message(Command("help"))
 async def help_command(message: Message) -> None:
     await message.answer(
         text=CommandsTextsEnum.HELP_COMMAND_MESSAGE.value,
+        reply_markup=ReplyKeyboardRemove()
     )
 
 
@@ -35,6 +38,7 @@ async def help_command(message: Message) -> None:
 async def info_command(message: Message) -> None:
     await message.answer(
         text=CommandsTextsEnum.INFO_COMMAND_MESSAGE.value,
+        reply_markup=ReplyKeyboardRemove()
     )
 
 
@@ -42,6 +46,7 @@ async def info_command(message: Message) -> None:
 async def memo_command(message: Message) -> None:
     await message.answer(
         text=CommandsTextsEnum.MEMO_COMMAND_MESSAGE.value,
+        reply_markup=ReplyKeyboardRemove()
     )
 
 
@@ -50,6 +55,7 @@ async def clear_command(message: Message, state: FSMContext) -> None:
     await state.clear()
     await message.answer(
         text=CommandsTextsEnum.CLEAR_COMMAND_MESSAGE.value,
+        reply_markup=await ReplyButtonFabric.build_buttons("general")
     )
 
 
