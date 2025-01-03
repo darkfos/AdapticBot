@@ -11,8 +11,8 @@ class ReplyGeneralButton:
             keyboard=[
                 [KeyboardButton(text="🆘 Помощь")],
                 [KeyboardButton(text="ℹ️ Краткая информация")],
-                [KeyboardButton(text="📙 Памятка")]
-            ]
+                [KeyboardButton(text="📙 Памятка")],
+            ],
         )
 
         return rk_builder

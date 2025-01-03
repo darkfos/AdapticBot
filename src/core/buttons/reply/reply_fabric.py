@@ -1,8 +1,11 @@
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
 
-from src.core.exceptions.btn_excp.reply_btn_exceotion import ReplyButtonException # noqa
+from src.core.exceptions.btn_excp.reply_btn_exceotion import (
+    ReplyButtonException,
+)  # noqa
 from src.core.buttons.reply import ReplyGeneralButton
+
 
 class ReplyButtonFabric:
     @staticmethod
