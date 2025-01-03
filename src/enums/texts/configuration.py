@@ -17,3 +17,5 @@ class ConfigurationTextEnum(Enum):
         "/help -  Помощь",
         "/clear - Очистка",
     ]
+
+    BOT_NAME: Final[str] = "Адаптик"

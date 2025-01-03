@@ -2,10 +2,12 @@ from aiogram.methods import (
     SetMyDescription,
     SetMyShortDescription,
     SetMyCommands,
+    SetChatMenuButton,
+    SetMyName,
 )
+from aiogram.types import MenuButtonCommands
 from aiogram.types.bot_command import BotCommand
 from aiogram import Bot
-
 
 from src.enums import ConfigurationTextEnum
 
@@ -51,5 +53,34 @@ async def set_my_commands(bot: Bot) -> None:
                 )
                 for command_desc in ConfigurationTextEnum.COMMANDS_LIST.value
             ]
+        )
+    )
+
+
+async def set_chat_menu_buttons(bot: Bot) -> None:
+    """
+    Set chat menu btn's
+    :param bot:
+    :return:
+    """
+
+    await bot(
+        SetChatMenuButton(
+            chat_id=None,
+            menu_button=MenuButtonCommands(text="Начать")
+        )
+    )
+
+
+async def set_bot_name(bot: Bot) -> None:
+    """
+    Set bot name
+    :param bot:
+    :return:
+    """
+
+    await bot(
+        SetMyName(
+            name=ConfigurationTextEnum.BOT_NAME.value
         )
     )
