@@ -11,10 +11,10 @@ class InlineButtonFabric:
 
     @staticmethod
     async def build_buttons(
-        btn_arg: Literal["general", "back"]
+        btn_arg: Literal["general_testsgeneral", "back"]
     ) -> InlineKeyboardBuilder:
         match btn_arg:
-            case "general":
+            case "general_tests":
                 return await GeneralInlineButton.start_btn_command()
             case "back":
                 return await GeneralInlineButton.back_btn_command()
