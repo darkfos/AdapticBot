@@ -7,6 +7,7 @@ class DatabaseSettings(BaseSettings):
     redis_host: str
     redis_port: str
     redis_time_life: int
+    main_db_url: str
 
     # Sqlite
 

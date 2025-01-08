@@ -2,6 +2,8 @@ import asyncio
 
 
 from src import TelegramBot
+from src.database import DBWorker
+
 
 
 if __name__ == "__main__":
