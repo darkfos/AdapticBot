@@ -1,10 +1,18 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, insert, delete, update
+from typing import Union, Type
+from src.database.sqlite.models import user_model, user_type_model, memo_model
 
 
 class GeneralRepository:
 
-    def __init__(self, session: AsyncSession, model):
+    def __init__(self,
+                 session: AsyncSession,
+                 model: Union[
+                     Type[user_model.UserModel],
+                     Type[user_type_model.UserTypeModel],
+                     Type[memo_model.MeetModel]
+                 ]):
         self.session = session
         self.model = model
 
@@ -21,7 +29,7 @@ class GeneralRepository:
     async def create(self, new_model) -> bool:
         try:
             stmt = insert(self.model).values(new_model.read_model())
-            result = await self.session.execute(stmt)
+            await self.session.execute(stmt)
             await self.session.commit()
             return True
         except Exception:
@@ -30,7 +38,7 @@ class GeneralRepository:
     async def delete(self, id_: int) -> bool:
         try:
             stmt = delete(self.model).where(self.model.id == id_)
-            result = await self.session.execute(stmt)
+            await self.session.execute(stmt)
             await self.session.commit()
             return True
         except Exception:
