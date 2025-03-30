@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.types import String
-from typing import List
+from typing import List, Any
+
 
 
 # Local
@@ -19,3 +20,9 @@ class UserTypeModel(MainBase):
 
     def __repr__(self) -> str:
         return self.__name__.lower()
+
+    def read_model(self) -> dict[str, Any]:
+        return {
+            k: v
+            for k,v in self.__dict__.items()
+        }

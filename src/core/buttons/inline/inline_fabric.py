@@ -18,6 +18,8 @@ class InlineButtonFabric:
                 return await GeneralInlineButton.start_btn_command()
             case "back":
                 return await GeneralInlineButton.back_btn_command()
+            case "admin":
+                return await GeneralInlineButton.admin_panel_command()
             case _:
                 raise InlineButtonException(
                     "not found arg for create inline btn"

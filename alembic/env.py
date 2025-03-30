@@ -11,6 +11,7 @@ from alembic import context
 # Model's
 from src.database.sqlite.models.user_model import UserModel
 from src.database.sqlite.models.user_type_model import UserTypeModel
+from src.database.sqlite.models.memo_model import MeetModel
 
 from src.settings import DatabaseSettings
 

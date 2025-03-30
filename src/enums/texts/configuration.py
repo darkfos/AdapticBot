@@ -12,10 +12,11 @@ class ConfigurationTextEnum(Enum):
 
     COMMANDS_LIST: List[str] = [
         "/start - Запуск бота",
-        "/info - Информация",
+        "/info - Матрица коммуникаций",
         "/memo - Памятка сотрудника",
         "/help -  Помощь",
         "/clear - Очистка",
+        "/admin - Админ панель"
     ]
 
     BOT_NAME: Final[str] = "Адаптик"

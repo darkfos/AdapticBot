@@ -1,5 +1,21 @@
 from enum import Enum
 from typing import Final
+from emoji import emojize
+
+class GeneralCommands(Enum):
+
+    START: str = "start"
+    HELP: str = "help"
+    INFO: str = "info"
+    MEMO: str = "memo"
+    CLEAR: str = "clear"
+    ADMIN: str = "admin"
+
+
+class InfoData:
+    instagram_url: str = "https://www.instagram.com/expert_klinika/"
+    vk_url: str = "https://vk.com/mdcexpert"
+    cloud: str = "https://cloud.mail.ru/public/VieN/4t8zyPG6M"
 
 
 class CommandsTextsEnum(Enum):
@@ -17,7 +33,10 @@ class CommandsTextsEnum(Enum):
 
     HELP_COMMAND_MESSAGE: Final[str] = "Помощь"
 
-    INFO_COMMAND_MESSAGE: Final[str] = "Информация"
+    INFO_COMMAND_MESSAGE: Final[str] = emojize("Добро пожаловать в матрицу коммуникаций!\n\n<b>Ссылки на наши ресурсы:</b>\n\n" \
+                                        f":star: Instagram - {InfoData.instagram_url}\n\n" \
+                                        f":star: Vk - {InfoData.vk_url}\n\n" \
+                                        f":star: Cloud - {InfoData.cloud}\n\n")
 
     MEMO_COMMAND_MESSAGE: Final[str] = "Памятка"
 

@@ -1,6 +1,7 @@
 from sqlalchemy import ForeignKey
 from sqlalchemy.types import String, BigInteger
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from typing import Any
 
 # Local
 from src.database.sqlite.models.main_model import MainBase
@@ -21,3 +22,9 @@ class UserModel(MainBase):
 
     def __repr__(self) -> str:
         return self.__str__()
+
+    def read_model(self) -> dict[str, Any]:
+        return {
+            k: v
+            for k,v in self.__dict__.items()
+        }

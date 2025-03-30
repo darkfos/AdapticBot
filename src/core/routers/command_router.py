@@ -1,13 +1,15 @@
 from aiogram import Router
 from aiogram.filters import CommandStart, Command  # noqa
 from aiogram.methods import EditMessageText, AnswerCallbackQuery
-from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove
+from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove, FSInputFile
 from aiogram.fsm.context import FSMContext
 from aiogram import F
 from typing import Union
 
 from src.core.buttons.reply import ReplyButtonFabric
+from src.enums.texts import GeneralCommands
 from src.enums import CommandsTextsEnum
+from src.settings.tg_bot_settings import TelegramBotSettings
 
 # BUTTONS
 from src.core.buttons.inline import InlineButtonFabric
@@ -32,7 +34,7 @@ async def start_command(message: Message) -> None:
     await message.chat.pin_message(start_message.message_id)
 
 
-@command_router.message(Command("help"))
+@command_router.message(Command(GeneralCommands.HELP.value))
 async def help_command(message: Message) -> None:
     """
     Help command
@@ -46,7 +48,7 @@ async def help_command(message: Message) -> None:
     )
 
 
-@command_router.message(Command("info"))
+@command_router.message(Command(GeneralCommands.INFO.value))
 async def info_command(message: Message) -> None:
     """
     Info command
@@ -54,13 +56,14 @@ async def info_command(message: Message) -> None:
     :return:
     """
 
-    await message.answer(
-        text=CommandsTextsEnum.INFO_COMMAND_MESSAGE.value,
-        reply_markup=ReplyKeyboardRemove(),
+    await message.answer_document(
+        document=FSInputFile(path="src/static/img/commutication_matrics.pdf"),
+        caption=CommandsTextsEnum.INFO_COMMAND_MESSAGE.value,
+        reply_markup=ReplyKeyboardRemove()
     )
 
 
-@command_router.message(Command("memo"))
+@command_router.message(Command(GeneralCommands.MEMO.value))
 async def memo_command(message: Message) -> None:
     """
     Memo command
@@ -74,10 +77,11 @@ async def memo_command(message: Message) -> None:
     )
 
 
-@command_router.message(Command("clear"))
+@command_router.message(Command(GeneralCommands.CLEAR.value))
 async def clear_command(message: Message, state: FSMContext) -> None:
     """
     Clear command
+
     :param message:
     :param state:
     :return:
@@ -88,6 +92,28 @@ async def clear_command(message: Message, state: FSMContext) -> None:
         text=CommandsTextsEnum.CLEAR_COMMAND_MESSAGE.value,
         reply_markup=await ReplyButtonFabric.build_buttons("general_tests"),
     )
+
+
+@command_router.message(Command(GeneralCommands.ADMIN.value))
+async def admin_command(message: Message) -> None:
+    """
+    Admin command
+
+    :param message:
+    :return:
+    """
+
+    if message.from_user.id in TelegramBotSettings().admins_list:
+        from src.enums.texts.admin_panel import admin_panel_text
+        await message.answer(
+            text=await admin_panel_text(message.from_user.first_name),
+            reply_markup=await InlineButtonFabric.build_buttons("admin")
+        )
+
+    else:
+        await message.answer(
+            text="Доступ к админ панели запрещен."
+        )
 
 
 @command_router.callback_query(F.data.startswith("/"))
@@ -101,7 +127,7 @@ async def query_to_commands(
     """
 
     match message.data:
-        case "/help":
+        case "/start":
             return await message.message.edit_text(
                 text=CommandsTextsEnum.HELP_COMMAND_MESSAGE.value,
                 reply_markup=await InlineButtonFabric.build_buttons("back"),

@@ -1,3 +1,4 @@
+import emoji
 from aiogram.utils.keyboard import InlineKeyboardBuilder, InlineKeyboardButton
 
 
@@ -25,4 +26,18 @@ class GeneralInlineButton:
         builder.add(
             InlineKeyboardButton(text="🔙 Обратно", callback_data="/back")
         )  # noqa
+        return builder.as_markup()
+
+    @classmethod
+    async def admin_panel_command(cls) -> InlineKeyboardBuilder:
+        builder: InlineKeyboardBuilder = InlineKeyboardBuilder()
+        builder.row(
+            InlineKeyboardButton(text=emoji.emojize(":calendar: Запланированные встречи"), callback_data="/admin_panel_meets"),
+            InlineKeyboardButton(text=emoji.emojize("➕:calendar: Назначить встречу"), callback_data="/admin_panel_create_meets"),
+        )
+        builder.row(
+            InlineKeyboardButton(text=emoji.emojize(":cross_mark::calendar: Удалить встречу"), callback_data="/admin_panel_delete_meets"),
+            InlineKeyboardButton(text=emoji.emojize(":pencil::calendar: Изменить данные о встрече"), callback_data="/admin_panel_change_meets"),
+        )
+
         return builder.as_markup()
