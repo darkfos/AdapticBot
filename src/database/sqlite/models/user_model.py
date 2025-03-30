@@ -15,7 +15,7 @@ class UserModel(MainBase):
 
 
     # Relations
-    user_type: Mapped["UserTypeModel"] = relationship(back_populates="UserTypeModel.users", uselist=False)
+    user_type: Mapped["UserTypeModel"] = relationship("UserTypeModel", back_populates="users", uselist=False)
 
     def __str__(self) -> str:
         return self.__name__.capitalize()

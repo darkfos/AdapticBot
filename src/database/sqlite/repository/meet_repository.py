@@ -5,5 +5,5 @@ from src.database.sqlite.models.memo_model import MeetModel
 
 
 class MeetModelRepository(GeneralRepository):
-    def __init__(self, session: AsyncSession):
-        super().__init__(session, MeetModel)
+    def __init__(self):
+        super().__init__(MeetModel)

@@ -13,7 +13,7 @@ class UserTypeModel(MainBase):
     name_type: Mapped[str] = mapped_column(type_=String(length=60))
 
     # Relations
-    users: Mapped[List["UserModel"]] = relationship(back_populates="UserModel.user_type", uselist=True)
+    users: Mapped[List["UserModel"]] = relationship("UserModel", back_populates="user_type", uselist=True)
 
     def __str__(self) -> str:
         return self.__name__.lower()
