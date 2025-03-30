@@ -1,3 +1,5 @@
+import datetime
+
 from aiogram import Router
 from aiogram.filters import CommandStart, Command  # noqa
 from aiogram.methods import EditMessageText, AnswerCallbackQuery
@@ -11,6 +13,7 @@ from src.enums.texts import GeneralCommands
 from src.enums import CommandsTextsEnum
 from src.settings.tg_bot_settings import TelegramBotSettings
 from src.core.filters.admin_filter import AdminFilter
+from src.core.filters.user import UserFilter
 
 # BUTTONS
 from src.core.buttons.inline import InlineButtonFabric
@@ -118,6 +121,22 @@ async def admin_command(message: Message) -> None:
         await message.answer(
             text="Доступ к админ панели запрещен."
         )
+
+
+@command_router.message(Command(GeneralCommands.SUCCESS.value))
+async def success_persona(message: Message) -> None:
+    await message.answer(text="Для активации аккаунта, нажмите на кнопку в нижней панели.", reply_markup=await ReplyButtonFabric.build_buttons("contact"))
+
+
+@command_router.message(UserFilter(), Command(GeneralCommands.PROFILE.value))
+async def profile_command(message: Message) -> None:
+
+    await message.answer(
+        text=(f"Ваш профиль: \n\n" +
+              f"Имя: {message.from_user.first_name}\n\n"
+              f"Должность: Отсутствует\n\n"
+              f"Дата вступления: {datetime.datetime.now()}")
+    )
 
 
 @command_router.callback_query(F.data.startswith("/"))

@@ -1,4 +1,5 @@
 import emoji
+from aiogram.types import InlineKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder, InlineKeyboardButton
 
 
@@ -38,6 +39,9 @@ class GeneralInlineButton:
         builder.row(
             InlineKeyboardButton(text=emoji.emojize(":cross_mark::calendar: Удалить встречу"), callback_data="admin_panel_delete_meets"),
             InlineKeyboardButton(text=emoji.emojize(":pencil::calendar: Изменить данные о встрече"), callback_data="admin_panel_change_meets"),
+        )
+        builder.row(
+            InlineKeyboardButton(text=emoji.emojize("👤 Добавить сотрудника"), callback_data="add_persona")
         )
 
         return builder.as_markup()

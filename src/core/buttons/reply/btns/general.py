@@ -16,3 +16,15 @@ class ReplyGeneralButton:
         )
 
         return rk_builder
+
+    @classmethod
+    async def get_contacts(cls) -> ReplyKeyboardMarkup:
+        rk_builder: ReplyKeyboardMarkup = ReplyKeyboardMarkup(
+            resize_keyboard=True,
+            one_time_keyboard=True,
+            keyboard=[
+                [KeyboardButton(text="Отправить контакт", request_contact=True)],
+            ],
+        )
+
+        return rk_builder

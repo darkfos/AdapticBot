@@ -13,5 +13,7 @@ class ReplyButtonFabric:
         match btn_name:
             case "general_tests":
                 return await ReplyGeneralButton.general_buttons()
+            case "contact":
+                return await ReplyGeneralButton.get_contacts()
             case _:
                 raise ReplyButtonException("No create reply btn")

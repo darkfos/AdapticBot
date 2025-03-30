@@ -16,7 +16,9 @@ class ConfigurationTextEnum(Enum):
         "/memo - Памятка сотрудника",
         "/help -  Помощь",
         "/clear - Очистка",
-        "/admin - Админ панель"
+        "/admin - Админ панель",
+        "/profile - Профиль",
+        "/success - Подтверждение аккаунта"
     ]
 
     BOT_NAME: Final[str] = "Адаптик"

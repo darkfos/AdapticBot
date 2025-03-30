@@ -10,6 +10,8 @@ class GeneralCommands(Enum):
     MEMO: str = "memo"
     CLEAR: str = "clear"
     ADMIN: str = "admin"
+    PROFILE: str = "profile"
+    SUCCESS: str = "success"
 
 
 class InfoData:

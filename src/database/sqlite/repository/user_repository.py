@@ -2,8 +2,18 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database.sqlite.repository.general_repository import GeneralRepository
 from src.database.sqlite.models.user_model import UserModel
+from src.database.sqlite.db_worker import DBWorker
+from sqlalchemy import select
 
 
 class UserModelRepository(GeneralRepository):
-    def __init__(self, session: AsyncSession):
-        super().__init__(session, UserModel)
+    def __init__(self):
+        super().__init__(UserModel)
+
+    @classmethod
+    async def iam_created(cls, tg_id: int, phone_number: str):
+        session: AsyncSession = await DBWorker.get_session()
+        user_is_created = await session.execute(select(UserModel).where(UserModel.tg_id == tg_id or UserModel.user_phone == phone_number))
+        user_data = user_is_created.one_or_none()
+        if user_data: return True
+        return False
