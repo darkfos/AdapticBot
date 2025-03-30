@@ -10,6 +10,7 @@ from src.core.buttons.reply import ReplyButtonFabric
 from src.enums.texts import GeneralCommands
 from src.enums import CommandsTextsEnum
 from src.settings.tg_bot_settings import TelegramBotSettings
+from src.core.filters.admin_filter import AdminFilter
 
 # BUTTONS
 from src.core.buttons.inline import InlineButtonFabric
@@ -94,7 +95,10 @@ async def clear_command(message: Message, state: FSMContext) -> None:
     )
 
 
-@command_router.message(Command(GeneralCommands.ADMIN.value))
+@command_router.message(
+    AdminFilter(),
+    Command(GeneralCommands.ADMIN.value)
+)
 async def admin_command(message: Message) -> None:
     """
     Admin command
