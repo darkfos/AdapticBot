@@ -26,7 +26,6 @@ async def message_handler(message: types.Message):
             user_data.tg_id = message.from_user.id
 
             is_updated = await UserModelRepository().update(user_data)
-            print(is_updated)
 
             if is_updated:
                 await message.answer(

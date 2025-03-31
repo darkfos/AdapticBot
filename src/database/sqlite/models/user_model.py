@@ -12,7 +12,6 @@ from src.database.sqlite.models.main_model import MainBase
 class UserModel(MainBase):
 
     id_user_type: Mapped[int] = mapped_column(ForeignKey("usertypemodel.id"))
-    user_name: Mapped[str] = mapped_column(type_=String(length=255), nullable=False, index=False)
     user_phone: Mapped[str] = mapped_column(type_=String(length=25), nullable=True, index=True)
     post: Mapped[str] = mapped_column(type_=String(200), nullable=True, index=True)
     tg_id: Mapped[int] = mapped_column(type_=BigInteger, nullable=True, index=True)

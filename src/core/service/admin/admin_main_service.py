@@ -4,7 +4,10 @@ from aiogram.fsm.context import FSMContext
 from src.core.filters.admin_filter import AdminFilter
 from src.database.sqlite.repository.meet_repository import MeetModelRepository
 from src.core.service.admin.states.general_states import CreateMeet, DeleteMeet, UpdateMeet
+from src.core.service.user.states.user_states import CreateUser
 from src.core.buttons.inline import InlineButtonFabric
+from src.database.sqlite.repository.user_repository import UserModelRepository
+from src.database.sqlite.models.user_model import UserModel
 
 admin_router: Router = Router(name="admin")
 
@@ -52,6 +55,11 @@ async def meets_callback_handler(message: types.CallbackQuery, state: FSMContext
             await message.message.answer(text="Отлично, вы выбрали опцию изменить данные о встрече, пожалуйста заполните форму.\n\n"
                                               "Введите идентификатор встречи: ")
             await state.set_state(UpdateMeet.id_meet)
+        case "add_persona":
+            await message.message.answer(
+                text="Добавление нового сотрудника...\n\n Пожалуйста введите <b>telegram id</b> пользователя"
+            )
+            await state.set_state(state=CreateUser.tg_id)
 
 # States
 
@@ -144,3 +152,42 @@ async def get_user_who(message: types.Message, state: FSMContext) -> None:
     await state.update_data({"date": message.text})
     await message.answer(text="Отлично, идет обработка...")
     await state.clear()
+
+
+# User
+@admin_router.message(CreateUser.tg_id)
+async def get_tgid_user(message: types.Message, state: FSMContext) -> None:
+    await state.update_data({"tg_id": message.text})
+    await message.answer(text='Отлично, теперь введите <b>номер телефона</b>, следующего формата <i>79823848383</i>')
+    await state.set_state(CreateUser.user_phone)
+
+@admin_router.message(CreateUser.user_phone)
+async def get_phone_user(message: types.Message, state: FSMContext) -> None:
+    await state.update_data({"user_phone": message.text})
+    await message.answer(text='Отлично, теперь введите <b>должность</b> сотрудника')
+    await state.set_state(CreateUser.post)
+
+@admin_router.message(CreateUser.post)
+async def get_post_user(message: types.Message, state: FSMContext) -> None:
+    await state.update_data({"post": message.text})
+    await message.answer(text='Отлично, теперь введите дату вступления в должность сотрудника')
+    await state.set_state(CreateUser.date_start)
+
+@admin_router.message(CreateUser.date_start)
+async def get_date_user(message: types.Message, state: FSMContext) -> None:
+    await state.update_data({"date_start": message.text})
+    await message.answer(text='Идет обработка...')
+
+    user_is_created = await UserModelRepository.create(
+        new_model=UserModel(
+            id_type_user=1,
+            user_phone=await state.get_value("user_phone"),
+            post=await state.get_value("post"),
+            tg_id=await state.get_value("tg_id"),
+            date_start=await state.get_value("date_start")
+        )
+    )
+
+    await state.clear()
+    if user_is_created:
+        await message.answer("Отлично, сотрудник был внесен в базу данных")
