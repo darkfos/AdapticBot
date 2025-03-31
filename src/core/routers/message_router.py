@@ -1,18 +1,39 @@
-from aiogram.types import Message
-from aiogram import Router
+from typing import Tuple
 
+from aiogram import Router, types
+from src.database.sqlite.repository.user_repository import UserModelRepository
+from src.database.sqlite.models.user_model import UserModel
 
-message_router: Router = Router(name="message")
+message_router: Router = Router(name="message_router")
 
 
 @message_router.message()
-async def other_messages(message: Message) -> None:
-    """
-    Router for check other messages from user
-    :param message:
-    :return:
-    """
+async def message_handler(message: types.Message):
 
-    await message.answer(
-        text="Не понимаю вашу команду. \n<b>Введите</b> /help для получения помощи.."  # noqa
-    )
+    if message.contact:
+        # Сохраняем информацию о пользователе
+        user_data: Tuple[UserModel] = await UserModelRepository().get_one(id_=message.from_user.id)
+        user_data: UserModel = user_data[0]
+
+        if not user_data:
+            user_data: UserModel = (await UserModelRepository().find_by_phone(
+                phone_number=message.contact.phone_number
+            ))[0]
+
+        if not user_data.user_phone:
+
+            user_data.user_phone = message.contact.phone_number
+            user_data.tg_id = message.from_user.id
+
+            is_updated = await UserModelRepository().update(user_data)
+            print(is_updated)
+
+            if is_updated:
+                await message.answer(
+                    text=f"Отлично, {message.from_user.first_name} теперь вам доступен профиль!"
+                )
+
+            return
+        await message.answer(
+            text=f"Вы {message.from_user.first_name} уже подвердили свой аккаунт"
+        )

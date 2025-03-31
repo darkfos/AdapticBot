@@ -14,6 +14,8 @@ from src.enums import CommandsTextsEnum
 from src.settings.tg_bot_settings import TelegramBotSettings
 from src.core.filters.admin_filter import AdminFilter
 from src.core.filters.user import UserFilter
+from src.database.sqlite.repository.user_repository import UserModelRepository
+from src.database.sqlite.models.user_model import UserModel
 
 # BUTTONS
 from src.core.buttons.inline import InlineButtonFabric
@@ -131,11 +133,15 @@ async def success_persona(message: Message) -> None:
 @command_router.message(UserFilter(), Command(GeneralCommands.PROFILE.value))
 async def profile_command(message: Message) -> None:
 
+    user_data: UserModel = await UserModelRepository().get_one(id_=message.from_user.id)
+    user_data = user_data[0]
+
     await message.answer(
-        text=(f"Ваш профиль: \n\n" +
+        text=(f"<b>Мой профиль</b> \n\n" +
               f"Имя: {message.from_user.first_name}\n\n"
-              f"Должность: Отсутствует\n\n"
-              f"Дата вступления: {datetime.datetime.now()}")
+              f"Номер телефона: {user_data.user_phone if user_data.user_phone else 'Отсутствует'}\n\n"
+              f"Должность: {user_data.post if user_data.post else 'Отсутствует'}\n\n"
+              f"Дата вступления: {user_data.date_start}")
     )
 
 

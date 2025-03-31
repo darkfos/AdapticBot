@@ -8,7 +8,7 @@ from sqlalchemy.orm import (
 
 
 class MainBase(DeclarativeBase):
-    id: Mapped[int] = mapped_column(primary_key=True, type_=Integer)
+    id: Mapped[int] = mapped_column(primary_key=True, type_=Integer, autoincrement=True)
 
     @classmethod
     @declared_attr.directive

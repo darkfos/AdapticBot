@@ -13,7 +13,16 @@ class UserModelRepository(GeneralRepository):
     @classmethod
     async def iam_created(cls, tg_id: int, phone_number: str):
         session: AsyncSession = await DBWorker.get_session()
-        user_is_created = await session.execute(select(UserModel).where(UserModel.tg_id == tg_id or UserModel.user_phone == phone_number))
+        user_is_created = await session.execute(select(UserModel).where(UserModel.tg_id == tg_id))
         user_data = user_is_created.one_or_none()
+        await session.close()
         if user_data: return True
         return False
+
+    @classmethod
+    async def find_by_phone(cls, phone_number: str):
+        session: AsyncSession = await DBWorker.get_session()
+        user_is_created = await session.execute(select(UserModel).where(UserModel.user_phone == phone_number))
+        user_data = user_is_created.one_or_none()
+        await session.close()
+        return user_data

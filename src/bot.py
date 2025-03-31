@@ -6,6 +6,7 @@ from aiogram.fsm.storage.memory import MemoryStorage
 
 from src.settings import TelegramBotSettings
 from src.core.routers import command_router
+from src.core.routers import message_router
 from src.core.service.admin.admin_main_service import admin_router
 from src.core.configurations import (
     set_description_on_bot,
@@ -39,7 +40,7 @@ class TelegramBot:
         self.__dispatcher.message.middleware.register(
             SpamMiddleware(seconds=0.3)
         )  # noqa
-        self.__dispatcher.include_routers(command_router, admin_router)
+        self.__dispatcher.include_routers(command_router, message_router, admin_router)
 
     async def set_configs(self) -> None:
         """
