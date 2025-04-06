@@ -40,7 +40,7 @@ class TelegramBot:
         self.__dispatcher.message.middleware.register(
             SpamMiddleware(seconds=0.3)
         )  # noqa
-        self.__dispatcher.include_routers(command_router, message_router, admin_router)
+        self.__dispatcher.include_routers(command_router, admin_router, message_router)
 
     async def set_configs(self) -> None:
         """

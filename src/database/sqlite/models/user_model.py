@@ -34,5 +34,5 @@ class UserModel(MainBase):
         return {
             k: v
             for k,v in self.__dict__.items()
-            if k not in ("_sa_instance_state", "id")
+            if k not in ("_sa_instance_state", "id") and not k.startswith("_")
         }

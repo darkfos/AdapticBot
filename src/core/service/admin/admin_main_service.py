@@ -1,3 +1,5 @@
+import datetime
+
 from aiogram import Router, types, F
 from aiogram.fsm.context import FSMContext
 
@@ -30,6 +32,10 @@ async def skip_step(callback: types.CallbackQuery, state: FSMContext):
         await state.update_data(description=None)
         await callback.message.answer("Описание пропущено. Введите новую дату:")
         await state.set_state(UpdateMeet.date)
+    elif current_state == CreateUser.tg_id.state:
+        await state.update_data(tg_id=None)
+        await callback.message.answer("tg id пропущен. Введите номер телефона сотрудника, следующего формата <i>79823848383</i>")
+        await state.set_state(CreateUser.user_phone)
 
 
 @admin_router.callback_query(AdminFilter())
@@ -57,7 +63,8 @@ async def meets_callback_handler(message: types.CallbackQuery, state: FSMContext
             await state.set_state(UpdateMeet.id_meet)
         case "add_persona":
             await message.message.answer(
-                text="Добавление нового сотрудника...\n\n Пожалуйста введите <b>telegram id</b> пользователя"
+                text="Добавление нового сотрудника...\n\n Пожалуйста введите <b>telegram id</b> пользователя",
+                reply_markup=await InlineButtonFabric.build_buttons("skip")
             )
             await state.set_state(state=CreateUser.tg_id)
 
@@ -178,16 +185,22 @@ async def get_date_user(message: types.Message, state: FSMContext) -> None:
     await state.update_data({"date_start": message.text})
     await message.answer(text='Идет обработка...')
 
-    user_is_created = await UserModelRepository.create(
-        new_model=UserModel(
-            id_type_user=1,
-            user_phone=await state.get_value("user_phone"),
-            post=await state.get_value("post"),
-            tg_id=await state.get_value("tg_id"),
-            date_start=await state.get_value("date_start")
+    try:
+        user_is_created = await UserModelRepository().create(
+            new_model=UserModel(
+                id_user_type=1,
+                user_phone=await state.get_value("user_phone"),
+                post=await state.get_value("post"),
+                tg_id=await state.get_value("tg_id"),
+                date_start=datetime.datetime.strptime(await state.get_value("date_start"), "%Y-%m-%d")
+            )
         )
-    )
 
-    await state.clear()
-    if user_is_created:
-        await message.answer("Отлично, сотрудник был внесен в базу данных")
+        await state.clear()
+        if user_is_created:
+            await message.answer("Отлично, сотрудник был внесен в базу данных")
+            return None
+
+        raise Exception("Не удалось добавить пользователя")
+    except Exception:
+        await message.answer("Не удалось добавить сотрудника")

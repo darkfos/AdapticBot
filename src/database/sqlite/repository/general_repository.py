@@ -34,7 +34,7 @@ class GeneralRepository:
     async def create(self, new_model) -> bool:
         try:
             self.session = await DBWorker.get_session()
-            stmt = insert(self.model).values(new_model.read_model())
+            stmt = insert(self.model).values(await new_model.read_model())
             await self.session.execute(stmt)
             await self.session.commit()
             await self.session.close()
