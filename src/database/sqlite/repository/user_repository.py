@@ -20,8 +20,7 @@ class UserModelRepository(GeneralRepository):
 
         user_data = user_is_created.one_or_none()
         await session.close()
-        if user_data: return True
-        return False
+        return user_data
 
     @classmethod
     async def find_by_phone(cls, phone_number: str):

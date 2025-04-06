@@ -19,7 +19,7 @@ class GeneralRepository:
 
     async def get_one(self, id_: int):
         self.session = await DBWorker.get_session()
-        stmt = select(self.model).where(self.model.tg_id == id_)
+        stmt = select(self.model).where(self.model.id == id_)
         result = await self.session.execute(stmt)
         await self.session.close()
         return result.one_or_none()

@@ -25,16 +25,21 @@ class Pagination:
                 )
             )
 
+        inline_builder.row(
+            InlineKeyboardButton(
+                text="Подробнее",
+                callback_data="profile_page_description_" + str(self.meets[self.page].id)
+            )
+        )
+
         return (all_meets[self.page], inline_builder.as_markup(), self.page+1)
 
     async def get_next(self, page):
         all_meets = await MeetModelRepository.get_all_by_user(self.tg_id) if self.tg_id else await MeetModelRepository.get_all()
         self.meets = all_meets
-        page_back = page
         inline_builder = InlineKeyboardBuilder()
 
         if (page < len(self.meets)-1):
-            page_back += 1
             inline_builder.add(
                 InlineKeyboardButton(
                     text="Дальше ->",
@@ -46,9 +51,16 @@ class Pagination:
             inline_builder.add(
                 InlineKeyboardButton(
                     text="<- Обратно",
-                    callback_data="profile_page_back_" + str(page_back-1)
+                    callback_data="profile_page_back_" + str(page-1)
                 )
             )
+
+        inline_builder.row(
+            InlineKeyboardButton(
+                text="Подробнее",
+                callback_data="profile_page_description_" + str(self.meets[page].id)
+            )
+        )
 
         return (self.meets[page], inline_builder.as_markup(), page+1)
 
@@ -68,9 +80,16 @@ class Pagination:
         if (page > 0):
             inline_builder.add(
                 InlineKeyboardButton(
-                    text="Обратно <-",
+                    text="<- Обратно",
                     callback_data="profile_page_back_" + str(page-1)
                 )
             )
+
+        inline_builder.row(
+            InlineKeyboardButton(
+                text="Подробнее",
+                callback_data="profile_page_description_" + str(self.meets[page].id)
+            )
+        )
 
         return (self.meets[page], inline_builder.as_markup(), page+1)

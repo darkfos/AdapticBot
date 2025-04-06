@@ -131,7 +131,7 @@ async def success_persona(message: Message) -> None:
 @command_router.message(UserFilter(), Command(GeneralCommands.PROFILE.value))
 async def profile_command(message: Message) -> None:
 
-    user_data: UserModel = await UserModelRepository().get_one(id_=message.from_user.id)
+    user_data: UserModel = await UserModelRepository().iam_created(tg_id=message.from_user.id)
     user_data = user_data[0]
 
     user_photo = await bot.get_user_profile_photos(user_id=user_data.tg_id)

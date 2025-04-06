@@ -5,6 +5,7 @@ from aiogram.types import CallbackQuery, Message
 from src.core.buttons.reply import ReplyButtonFabric
 from src.core.service.user.states.user_states import UpdateUserPhone
 from src.core.service.utils.pagination import Pagination
+from src.database.sqlite.repository.meet_repository import MeetModelRepository
 
 user_profile_router: Router = Router(name="profile_message_router")
 
@@ -40,6 +41,12 @@ async def profile_buttons_menu(callback_data: CallbackQuery, state: FSMContext) 
                 reply_markup=user_meets_data[1]
             )
         case _:
+            if "description" in callback_data.data:
+                meet_data = await MeetModelRepository().get_one(id_=int(callback_data.data.split("_")[-1]))
+                if meet_data:
+                    await callback_data.message.answer(text="Описание: \n" + meet_data[0].description)
+                else:
+                    await callback_data.message.answer(text="Не удалось загрузить описание")
             if "next" in callback_data.data:
                 user_meets_data = await user_meets.get_next(int(callback_data.data.split("_")[-1]))
                 await callback_data.message.edit_text(
