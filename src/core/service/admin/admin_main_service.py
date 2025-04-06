@@ -189,6 +189,7 @@ async def get_date_user(message: types.Message, state: FSMContext) -> None:
         user_is_created = await UserModelRepository().create(
             new_model=UserModel(
                 id_user_type=1,
+                user_name="Инкогнито",
                 user_phone=await state.get_value("user_phone"),
                 post=await state.get_value("post"),
                 tg_id=await state.get_value("tg_id"),

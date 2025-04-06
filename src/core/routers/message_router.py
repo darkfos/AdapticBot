@@ -16,6 +16,9 @@ async def message_handler(message: types.Message, state: FSMContext):
         # Сохраняем информацию о пользователе
         user_data: Tuple[UserModel] = await UserModelRepository().get_one(id_=message.from_user.id)
 
+        if user_data:
+            user_data = user_data[0]
+
         if not user_data:
             user_data: UserModel = (await UserModelRepository().find_by_phone(
                 phone_number=message.contact.phone_number
@@ -23,9 +26,11 @@ async def message_handler(message: types.Message, state: FSMContext):
 
         if user_data:
 
-            user_data[0].user_phone = message.contact.phone_number
+            user_data.user_phone = message.contact.phone_number
+            user_data.tg_id = message.from_user.id
+            user_data.user_name = message.from_user.first_name
 
-            is_updated = await UserModelRepository().update(user_data[0])
+            is_updated = await UserModelRepository().update(user_data)
 
             if is_updated:
                 await message.answer(

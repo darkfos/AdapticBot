@@ -4,8 +4,7 @@ from aiogram.types import CallbackQuery, Message
 
 from src.core.buttons.reply import ReplyButtonFabric
 from src.core.service.user.states.user_states import UpdateUserPhone
-from src.database.sqlite.repository.user_repository import UserModelRepository
-
+from src.core.service.utils.pagination import Pagination
 
 user_profile_router: Router = Router(name="profile_message_router")
 
@@ -24,4 +23,15 @@ async def profile_buttons_menu(callback_data: CallbackQuery, state: FSMContext) 
                 reply_markup=await ReplyButtonFabric.build_buttons("contact")
             )
         case "profile_meets":
-            await callback_data.message.answer("Мои встречи...")
+            user_meets = await Pagination(int(callback_data.from_user.id)).get_meets()
+            if not user_meets:
+                await callback_data.message.answer(
+                    text="У вас пока нет запланированных встреч"
+                )
+                return None
+
+            await callback_data.message.answer(
+                f"Мои встречи (страница {user_meets[-1]})\n\n"
+                f"Дата: {user_meets["user_who_data"].user_name}",
+                reply_markup=user_meets[1]
+            )

@@ -139,7 +139,7 @@ async def profile_command(message: Message) -> None:
     await message.answer_photo(
         photo=user_photo.photos[0][0].file_id,
         caption=(f"\n<b>Мой профиль</b> \n\n" +
-              f"<b>Имя:</b> {message.from_user.first_name}\n\n"
+              f"<b>Имя:</b> {user_data.user_name}\n\n"
               f"<b>Номер телефона:</b> {user_data.user_phone if user_data.user_phone else 'Отсутствует'}\n\n"
               f"<b>Должность:</b> {user_data.post if user_data.post else 'Отсутствует'}\n\n"
               f"<b>Дата вступления:</b> {user_data.date_start}"),
