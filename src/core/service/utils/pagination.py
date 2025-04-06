@@ -12,7 +12,7 @@ class Pagination:
         self.meets = None
 
     async def get_meets(self):
-        all_meets = await MeetModelRepository.get_all_by_user(self.tg_id) if self.tg_id else await MeetModelRepository.get_all()
+        all_meets = await MeetModelRepository.get_all_by_user(self.tg_id)
         self.meets = all_meets
 
         inline_builder = InlineKeyboardBuilder()
@@ -32,10 +32,10 @@ class Pagination:
             )
         )
 
-        return (all_meets[self.page], inline_builder.as_markup(), self.page+1)
+        return (self.meets[self.page], inline_builder.as_markup(), self.page+1, len(self.meets))
 
     async def get_next(self, page):
-        all_meets = await MeetModelRepository.get_all_by_user(self.tg_id) if self.tg_id else await MeetModelRepository.get_all()
+        all_meets = await MeetModelRepository.get_all_by_user(self.tg_id)
         self.meets = all_meets
         inline_builder = InlineKeyboardBuilder()
 
@@ -62,10 +62,10 @@ class Pagination:
             )
         )
 
-        return (self.meets[page], inline_builder.as_markup(), page+1)
+        return (self.meets[page], inline_builder.as_markup(), page+1, len(self.meets))
 
     async def get_previously(self, page):
-        all_meets = await MeetModelRepository.get_all_by_user(self.tg_id) if self.tg_id else await MeetModelRepository.get_all()
+        all_meets = await MeetModelRepository.get_all_by_user(self.tg_id)
         self.meets = all_meets
         inline_builder = InlineKeyboardBuilder()
 
@@ -92,4 +92,4 @@ class Pagination:
             )
         )
 
-        return (self.meets[page], inline_builder.as_markup(), page+1)
+        return (self.meets[page], inline_builder.as_markup(), page+1, len(self.meets))

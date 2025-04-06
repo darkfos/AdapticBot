@@ -28,8 +28,9 @@ class GeneralRepository:
         self.session = await DBWorker.get_session()
         stmt = select(self.model)
         result = await self.session.execute(stmt)
+        result = result.scalars().all()
         await self.session.close()
-        return result.all()
+        return result
 
     async def create(self, new_model) -> bool:
         try:
@@ -39,7 +40,8 @@ class GeneralRepository:
             await self.session.commit()
             await self.session.close()
             return True
-        except Exception:
+        except Exception as ex:
+            print(ex)
             await self.session.close()
             return False
 

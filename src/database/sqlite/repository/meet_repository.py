@@ -15,12 +15,20 @@ class MeetModelRepository(GeneralRepository):
     @classmethod
     async def get_all_by_user(cls, tg_id: int):
         session: AsyncSession = await DBWorker.get_session()
-        data = select(MeetModel).join(
-            UserModel, UserModel.id == MeetModel.id_who
-        ).where(UserModel.tg_id == tg_id).options(
-            joinedload(MeetModel.user_who_data),
-            joinedload(MeetModel.user_with_data)
-        )
-        result = await session.execute(data)
-        await session.close()
-        return result.scalars().all()
+        try:
+            data = select(MeetModel).join(
+                UserModel, UserModel.id == MeetModel.id_who
+            )
+
+            if tg_id:
+                data = data.where(UserModel.tg_id == tg_id)
+
+            data = data.options(
+                joinedload(MeetModel.user_who_data),
+                joinedload(MeetModel.user_with_data)
+            )
+
+            result = await session.execute(data)
+            return result.scalars().all()
+        finally:
+            await session.close()

@@ -10,6 +10,8 @@ from src.core.service.user.states.user_states import CreateUser
 from src.core.buttons.inline import InlineButtonFabric
 from src.database.sqlite.repository.user_repository import UserModelRepository
 from src.database.sqlite.models.user_model import UserModel
+from src.core.service.utils.pagination import Pagination
+from src.database.sqlite.models.memo_model import MeetModel
 
 admin_router: Router = Router(name="admin")
 
@@ -18,17 +20,7 @@ admin_router: Router = Router(name="admin")
 async def skip_step(callback: types.CallbackQuery, state: FSMContext):
     current_state = await state.get_state()
 
-    if current_state == UpdateMeet.user_who.state:
-        await state.update_data(user_who=None)
-        await callback.message.answer("Участник пропущен. Введите второго участника:")
-        await state.set_state(UpdateMeet.user_with)
-
-    elif current_state == UpdateMeet.user_with.state:
-        await state.update_data(user_with=None)
-        await callback.message.answer("Второй участник пропущен. Введите описание:")
-        await state.set_state(UpdateMeet.description)
-
-    elif current_state == UpdateMeet.description.state:
+    if current_state == UpdateMeet.description.state:
         await state.update_data(description=None)
         await callback.message.answer("Описание пропущено. Введите новую дату:")
         await state.set_state(UpdateMeet.date)
@@ -39,30 +31,41 @@ async def skip_step(callback: types.CallbackQuery, state: FSMContext):
 
 
 @admin_router.callback_query(AdminFilter())
-async def meets_callback_handler(message: types.CallbackQuery, state: FSMContext) -> None:
-    match message.data:
+async def meets_callback_handler(callback_data: types.CallbackQuery, state: FSMContext) -> None:
+    match callback_data.data:
         case "admin_panel_meets":
-            await message.message.answer(text="Отлично, вы выбрали опцию встречи.")
+            await callback_data.message.answer(text="Отлично, вы выбрали опцию встречи.")
             meets = await MeetModelRepository().get_all()
             if len(meets) < 1:
-                await message.message.answer(text="Запланированных встреч не нашлось.")
+                await callback_data.message.answer(text="Запланированных встреч не нашлось.")
             else:
                 # TODO добавить пагинацию для списка встреч
-                pass
+                meets_data = await Pagination().get_meets()
+                await callback_data.message.answer(
+                    f"Встречи (страница {meets_data[-2]})\n\n"
+                    f"<b>Идентификатор встречи: </b> {meets_data[0].id}\n\n"
+                    f"<b>Кто</b>: {meets_data[0].user_who_data.user_name} ({meets_data[0].user_who_data.user_phone})\n\n"
+                    f"<b>С кем</b>: {meets_data[0].user_with_data.user_name} ({meets_data[0].user_with_data.user_phone})\n\n"
+                    f"<b>Дата</b>: {meets_data[0].date_meeting}\n\n"
+                    f"<b>Описание встречи</b>: {meets_data[0].description[:25]}...\n\n"
+                    f"<b><i>Количество актуальных встреч: {meets_data[-1]}</i></b>",
+                    reply_markup=meets_data[1]
+                )
+
         case "admin_panel_create_meets":
-            await message.message.answer(text="Отлично, вы выбрали опцию создать встречу, пожалуйста заполните форму.\n\n"
-                                              "Введите идентификатор сотрудника или его номер телефона")
+            await callback_data.message.answer(text="Отлично, вы выбрали опцию создать встречу, пожалуйста заполните форму.\n\n"
+                                              "Введите идентификатор сотрудника или его номер телефона (формат +79182348923)")
             await state.set_state(state=CreateMeet.user_who)
         case "admin_panel_delete_meets":
-            await message.message.answer(text="Отлично, вы выбрали опцию удалить встречу, пожалуйста заполните форму.\n\n"
+            await callback_data.message.answer(text="Отлично, вы выбрали опцию удалить встречу, пожалуйста заполните форму.\n\n"
                                               "Введите идентификатор встречи: ")
             await state.set_state(DeleteMeet.id_meet)
         case "admin_panel_change_meets":
-            await message.message.answer(text="Отлично, вы выбрали опцию изменить данные о встрече, пожалуйста заполните форму.\n\n"
+            await callback_data.message.answer(text="Отлично, вы выбрали опцию изменить данные о встрече, пожалуйста заполните форму.\n\n"
                                               "Введите идентификатор встречи: ")
             await state.set_state(UpdateMeet.id_meet)
         case "add_persona":
-            await message.message.answer(
+            await callback_data.message.answer(
                 text="Добавление нового сотрудника...\n\n Пожалуйста введите <b>telegram id</b> пользователя",
                 reply_markup=await InlineButtonFabric.build_buttons("skip")
             )
@@ -75,13 +78,13 @@ async def meets_callback_handler(message: types.CallbackQuery, state: FSMContext
 async def get_user_who(message: types.Message, state: FSMContext) -> None:
     await state.update_data({"user_who": message.text})
     await message.answer(
-        text="Сотрудник записан, введите идентификатор или номер сотрудника (ментор, HRD)",
+        text="Сотрудник записан, введите идентификатор или номер телефона сотрудника кто назначает совещание (формат +79182348923)",
     )
     await state.set_state(CreateMeet.user_with)
 
 
 @admin_router.message(CreateMeet.user_with)
-async def get_user_who(message: types.Message, state: FSMContext) -> None:
+async def get_user_with(message: types.Message, state: FSMContext) -> None:
     await state.update_data({"user_with": message.text})
     await message.answer(
         text="Сотрудник записан, введите описание ко встречи",
@@ -90,7 +93,7 @@ async def get_user_who(message: types.Message, state: FSMContext) -> None:
 
 
 @admin_router.message(CreateMeet.description)
-async def get_user_who(message: types.Message, state: FSMContext) -> None:
+async def get_user_description(message: types.Message, state: FSMContext) -> None:
     await state.update_data({"description": message.text})
     await message.answer(
         text="Отлично, назначьте дату\n\nФормат 2025-10-10 10:20:00",
@@ -99,11 +102,39 @@ async def get_user_who(message: types.Message, state: FSMContext) -> None:
 
 
 @admin_router.message(CreateMeet.date)
-async def get_user_who(message: types.Message, state: FSMContext) -> None:
-    await state.update_data({"date": message.text})
-    await message.answer(text="Встреча назначена!")
-    await state.clear()
+async def get_user_date(message: types.Message, state: FSMContext) -> None:
+    try:
+        await state.update_data({"date": message.text})
 
+        state_data = await state.get_data()
+
+        user_who_data = await UserModelRepository().iam_created(
+            tg_id=None if state_data["user_who"].startswith("+") else int(state_data["user_who"]),
+            phone_number=state_data["user_who"][1:] if state_data["user_who"].startswith("+") else None
+        )
+
+        user_with_data = await UserModelRepository().iam_created(
+            tg_id=None if state_data["user_with"].startswith("+") else int(state_data["user_with"]),
+            phone_number=state_data["user_with"][1:] if state_data["user_with"].startswith("+") else None
+        )
+
+        if user_who_data and user_with_data:
+
+            is_added = await MeetModelRepository().create(MeetModel(
+                id_who=user_who_data[0].id,
+                id_with=user_with_data[0].id,
+                description=state_data.get("description"),
+                date_meeting=datetime.datetime.strptime(state_data.get("date"), "%Y-%m-%d %H:%M:%S")
+            ))
+
+            if is_added:
+                await message.answer(text="Встреча назначена!")
+        else:
+            await message.answer(text="Не удалось назначить встречу, не были найдены указанные сотрудники")
+    except Exception:
+        await message.answer(text="Не удалось создать встречу, проверьте введенный формат даты")
+    finally:
+        await state.clear()
 
 # ========DELETE========
 @admin_router.message(DeleteMeet.id_meet)

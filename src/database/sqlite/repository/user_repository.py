@@ -13,6 +13,7 @@ class UserModelRepository(GeneralRepository):
     @classmethod
     async def iam_created(cls, tg_id: int = None, phone_number: str = None):
         session: AsyncSession = await DBWorker.get_session()
+
         if tg_id:
             user_is_created = await session.execute(select(UserModel).where(UserModel.tg_id == tg_id))
         else:

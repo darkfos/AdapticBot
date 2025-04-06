@@ -34,8 +34,9 @@ class MeetModel(MainBase):
     def __repr__(self):
         return self.__str__()
 
-    def read_model(self) -> dict[str, Any]:
+    async def read_model(self) -> dict[str, Any]:
         return {
             k: v
             for k,v in self.__dict__.items()
+            if not k.startswith("_")
         }

@@ -2,6 +2,8 @@ from typing import Tuple
 
 from aiogram import Router, types
 from aiogram.fsm.context import FSMContext
+from aiogram.types import ReplyKeyboardRemove
+
 from src.database.sqlite.repository.user_repository import UserModelRepository
 from src.database.sqlite.models.user_model import UserModel
 
@@ -34,12 +36,14 @@ async def message_handler(message: types.Message, state: FSMContext):
 
             if is_updated:
                 await message.answer(
-                    text="Отлично, номер телефона был обновлен!"
+                    text="Отлично, номер телефона был обновлен!",
+                    reply_markup=ReplyKeyboardRemove()
                 )
                 return
 
             await message.answer(
-                text="Не удалось обновить ваш номер телефона"
+                text="Не удалось обновить ваш номер телефона",
+                reply_markup=ReplyKeyboardRemove()
             )
 
         if not user_data.user_phone or not user_data.tg_id:
@@ -52,15 +56,18 @@ async def message_handler(message: types.Message, state: FSMContext):
             if is_updated:
                 if state.get_value("new_user_phone"):
                     await message.answer(
-                        text="Отлично, номер телефона был обновлен!"
+                        text="Отлично, номер телефона был обновлен!",
+                        reply_markup=ReplyKeyboardRemove()
                     )
                 else:
                     await message.answer(
-                        text=f"Отлично, {message.from_user.first_name} теперь вам доступен профиль!"
+                        text=f"Отлично, {message.from_user.first_name} теперь вам доступен профиль!",
+                        reply_markup=ReplyKeyboardRemove()
                     )
 
             return
 
         await message.answer(
-            text=f"Вы {message.from_user.first_name} уже подвердили свой аккаунт"
+            text=f"Вы {message.from_user.first_name} уже подвердили свой аккаунт",
+            reply_markup=ReplyKeyboardRemove()
         )
