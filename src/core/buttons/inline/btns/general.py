@@ -41,7 +41,10 @@ class GeneralInlineButton:
             InlineKeyboardButton(text=emoji.emojize(":pencil::calendar: Изменить данные о встрече"), callback_data="admin_panel_change_meets"),
         )
         builder.row(
-            InlineKeyboardButton(text=emoji.emojize("👤 Добавить сотрудника"), callback_data="add_persona")
+            InlineKeyboardButton(text=emoji.emojize("👤 Добавить сотрудника"), callback_data="admin_panel_add_persona")
+        )
+        builder.row(
+            InlineKeyboardButton(text=emoji.emojize("👤 Сотрудники"), callback_data="admin_panel_all_personal")
         )
 
         return builder.as_markup()

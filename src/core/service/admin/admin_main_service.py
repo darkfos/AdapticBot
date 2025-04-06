@@ -1,6 +1,6 @@
 import datetime
 
-from aiogram import Router, types, F
+from aiogram import Router, types, F, Bot
 from aiogram.fsm.context import FSMContext
 
 from src.core.filters.admin_filter import AdminFilter
@@ -12,9 +12,10 @@ from src.database.sqlite.repository.user_repository import UserModelRepository
 from src.database.sqlite.models.user_model import UserModel
 from src.core.service.utils.pagination import Pagination
 from src.database.sqlite.models.memo_model import MeetModel
+from src.settings import TelegramBotSettings
 
 admin_router: Router = Router(name="admin")
-
+bot: Bot = Bot(TelegramBotSettings().telegram_bot_token)
 
 @admin_router.callback_query(F.data == "skip")
 async def skip_step(callback: types.CallbackQuery, state: FSMContext):
@@ -38,6 +39,38 @@ async def skip_step(callback: types.CallbackQuery, state: FSMContext):
         await state.set_state(CreateUser.user_phone)
 
 
+
+
+@admin_router.callback_query(lambda x: x.data.startswith("persona_"))
+async def persona_menu_list(callback_data: types.CallbackQuery) -> None:
+    """
+    Обработка пользовательских сценариев из админ-панели
+    """
+
+    user_pagination = Pagination(int(callback_data.from_user.id))
+
+    if callback_data.data.startswith("persona_page_next_"):
+        users_data = await user_pagination.get_next(UserModelRepository(), int(callback_data.data.split("_")[-1]))
+        await callback_data.message.edit_text(
+            f"Пользователь {users_data[0].user_name}\n\n"
+            f"<b>Телефон: </b> {users_data[0].user_phone}\n\n"
+            f"<b>Должность: </b> {users_data[0].post}\n\n"
+            f"<b>Telegram ID: </b> {users_data[0].tg_id}\n\n"
+            f"<b>Дата вступления в должность: </b> {users_data[0].date_start}",
+            reply_markup=users_data[1]
+        )
+
+    if callback_data.data.startswith("persona_page_back_"):
+        users_data = await user_pagination.get_previously(UserModelRepository(), int(callback_data.data.split("_")[-1]))
+        await callback_data.message.edit_text(
+            f"Пользователь {users_data[0].user_name}\n\n"
+            f"<b>Телефон: </b> {users_data[0].user_phone}\n\n"
+            f"<b>Должность: </b> {users_data[0].post}\n\n"
+            f"<b>Telegram ID: </b> {users_data[0].tg_id}\n\n"
+            f"<b>Дата вступления в должность: </b> {users_data[0].date_start}",
+            reply_markup=users_data[1]
+        )
+
 @admin_router.callback_query(AdminFilter())
 async def meets_callback_handler(callback_data: types.CallbackQuery, state: FSMContext) -> None:
     match callback_data.data:
@@ -48,7 +81,7 @@ async def meets_callback_handler(callback_data: types.CallbackQuery, state: FSMC
                 await callback_data.message.answer(text="Запланированных встреч не нашлось.")
             else:
                 # TODO добавить пагинацию для списка встреч
-                meets_data = await Pagination().get_meets()
+                meets_data = await Pagination().get_data(MeetModelRepository())
                 await callback_data.message.answer(
                     f"Встречи (страница {meets_data[-2]})\n\n"
                     f"<b>Идентификатор встречи: </b> {meets_data[0].id}\n\n"
@@ -72,12 +105,23 @@ async def meets_callback_handler(callback_data: types.CallbackQuery, state: FSMC
             await callback_data.message.answer(text="Отлично, вы выбрали опцию изменить данные о встрече, пожалуйста заполните форму.\n\n"
                                               "Введите идентификатор встречи: ")
             await state.set_state(UpdateMeet.id_meet)
-        case "add_persona":
+        case "admin_panel_add_persona":
             await callback_data.message.answer(
                 text="Добавление нового сотрудника...\n\n Пожалуйста введите <b>telegram id</b> пользователя",
                 reply_markup=await InlineButtonFabric.build_buttons("skip")
             )
             await state.set_state(state=CreateUser.tg_id)
+        case "admin_panel_all_personal":
+            data_persona = await Pagination().get_data(UserModelRepository())
+            await callback_data.message.answer(
+                f"Пользователь {data_persona[0].user_name}\n\n"
+                f"<b>Телефон: </b> {data_persona[0].user_phone}\n\n"
+                f"<b>Должность: </b> {data_persona[0].post}\n\n"
+                f"<b>Telegram ID: </b> {data_persona[0].tg_id}\n\n"
+                f"<b>Дата вступления в должность: </b> {data_persona[0].date_start}",
+                reply_markup=data_persona[1]
+            )
+
 
 # States
 

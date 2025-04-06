@@ -27,14 +27,14 @@ async def profile_buttons_menu(callback_data: CallbackQuery, state: FSMContext) 
                 reply_markup=await ReplyButtonFabric.build_buttons("contact")
             )
         case "profile_meets":
-            user_meets_data = await user_meets.get_meets()
+            user_meets_data = await user_meets.get_data(MeetModelRepository())
             if not user_meets_data:
                 await callback_data.message.answer(
                     text="У вас пока нет запланированных встреч"
                 )
                 return None
 
-            header_message = await is_admin(callback_data.message.from_user.id)
+            header_message = await is_admin(int(callback_data.message.from_user.id))
             if header_message:
                 await callback_data.message.answer(
                     f"Встречи (страница {user_meets_data[-2]})\n\n"
@@ -48,7 +48,7 @@ async def profile_buttons_menu(callback_data: CallbackQuery, state: FSMContext) 
                 )
             else:
                 await callback_data.message.answer(
-                    f"{header_message}\n\n"
+                    f"Мои встречи: \n\n"
                     f"<b>С кем</b>: {user_meets_data[0].user_who_data.user_name}\n"
                     f"<b>Дата</b>: {user_meets_data[0].date_meeting}\n"
                     f"<b>Описание встречи</b>: {user_meets_data[0].description[:25]}...",
@@ -63,7 +63,7 @@ async def profile_buttons_menu(callback_data: CallbackQuery, state: FSMContext) 
                 else:
                     await callback_data.message.answer(text="Не удалось загрузить описание")
             if "next" in callback_data.data:
-                user_meets_data = await user_meets.get_next(int(callback_data.data.split("_")[-1]))
+                user_meets_data = await user_meets.get_next(MeetModelRepository(), int(callback_data.data.split("_")[-1]))
 
                 header_message = await is_admin(callback_data.from_user.id)
                 if header_message:
@@ -87,7 +87,7 @@ async def profile_buttons_menu(callback_data: CallbackQuery, state: FSMContext) 
                     )
 
             elif "back" in callback_data.data:
-                user_meets_data = await user_meets.get_previously(int(callback_data.data.split("_")[-1]))
+                user_meets_data = await user_meets.get_previously(MeetModelRepository(), int(callback_data.data.split("_")[-1]))
 
                 header_message = await is_admin(callback_data.from_user.id)
                 if header_message:
