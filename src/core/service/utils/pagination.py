@@ -9,30 +9,68 @@ class Pagination:
     def __init__(self, tg_id: int = None) -> None:
         self.tg_id = tg_id
         self.page: int = 0
-        self.page_end: int = self.page + 1
         self.meets = None
 
     async def get_meets(self):
         all_meets = await MeetModelRepository.get_all_by_user(self.tg_id) if self.tg_id else await MeetModelRepository.get_all()
         self.meets = all_meets
 
-        for meet in self.meets[self.page:self.page_end]:
-            inline_builder = InlineKeyboardBuilder()
+        inline_builder = InlineKeyboardBuilder()
 
-            if (self.page_end == len(all_meets) or self.page == len(all_meets)):
-                inline_builder.row(
-                    InlineKeyboardButton(
-                        text="<- Обратно",
-                        callback_data=str(self.page-1)
-                    )
+        if (self.page < len(self.meets)):
+            inline_builder.add(
+                InlineKeyboardButton(
+                    text="Дальше ->",
+                    callback_data="profile_page_next_" + str(self.page+1)
                 )
+            )
 
-            else:
-                inline_builder.add(
-                    InlineKeyboardButton(
-                        text="Дальше ->",
-                        callback_data=str(self.page+1)
-                    )
+        return (all_meets[self.page], inline_builder.as_markup(), self.page+1)
+
+    async def get_next(self, page):
+        all_meets = await MeetModelRepository.get_all_by_user(self.tg_id) if self.tg_id else await MeetModelRepository.get_all()
+        self.meets = all_meets
+        page_back = page
+        inline_builder = InlineKeyboardBuilder()
+
+        if (page < len(self.meets)-1):
+            page_back += 1
+            inline_builder.add(
+                InlineKeyboardButton(
+                    text="Дальше ->",
+                    callback_data="profile_page_next_" + str(page+1)
                 )
+            )
 
-            return (meet, inline_builder, self.page)
+        if (page > 0):
+            inline_builder.add(
+                InlineKeyboardButton(
+                    text="<- Обратно",
+                    callback_data="profile_page_back_" + str(page_back-1)
+                )
+            )
+
+        return (self.meets[page], inline_builder.as_markup(), page+1)
+
+    async def get_previously(self, page):
+        all_meets = await MeetModelRepository.get_all_by_user(self.tg_id) if self.tg_id else await MeetModelRepository.get_all()
+        self.meets = all_meets
+        inline_builder = InlineKeyboardBuilder()
+
+        if (page < len(self.meets)-1):
+            inline_builder.add(
+                InlineKeyboardButton(
+                    text="Дальше ->",
+                    callback_data="profile_page_next_" + str(page+1)
+                )
+            )
+
+        if (page > 0):
+            inline_builder.add(
+                InlineKeyboardButton(
+                    text="Обратно <-",
+                    callback_data="profile_page_back_" + str(page-1)
+                )
+            )
+
+        return (self.meets[page], inline_builder.as_markup(), page+1)
