@@ -20,11 +20,19 @@ admin_router: Router = Router(name="admin")
 async def skip_step(callback: types.CallbackQuery, state: FSMContext):
     current_state = await state.get_state()
 
+    if current_state == UpdateMeet.user_who.state:
+        await state.update_data(user_who=None)
+        await callback.message.answer("Участник встречи пропущен.\nВведите данные нового сотрудника, tg_id или номер телефона следующего формата <i>79823848383</i>")
+        await state.set_state(UpdateMeet.user_with)
+    if current_state == UpdateMeet.user_with.state:
+        await state.update_data(user_with=None)
+        await callback.message.answer("Участник встречи пропущен.\nВведите описание встречи")
+        await state.set_state(UpdateMeet.description)
     if current_state == UpdateMeet.description.state:
         await state.update_data(description=None)
-        await callback.message.answer("Описание пропущено. Введите новую дату:")
+        await callback.message.answer("Описание пропущено.\nВведите новую дату (Формат 2025-10-10 10:10:20")
         await state.set_state(UpdateMeet.date)
-    elif current_state == CreateUser.tg_id.state:
+    if current_state == CreateUser.tg_id.state:
         await state.update_data(tg_id=None)
         await callback.message.answer("tg id пропущен. Введите номер телефона сотрудника, следующего формата <i>79823848383</i>")
         await state.set_state(CreateUser.user_phone)
@@ -152,7 +160,7 @@ async def get_user_who(message: types.Message, state: FSMContext) -> None:
 
 # ========UPDATE========
 @admin_router.message(UpdateMeet.id_meet)
-async def get_user_who(message: types.Message, state: FSMContext) -> None:
+async def get_id_meet_update_meet(message: types.Message, state: FSMContext) -> None:
     await state.update_data({"id_meet": message.text})
     await message.answer(
         text="Отлично, этап изменения участника встречи",
@@ -162,7 +170,7 @@ async def get_user_who(message: types.Message, state: FSMContext) -> None:
 
 
 @admin_router.message(UpdateMeet.user_who)
-async def get_user_who(message: types.Message, state: FSMContext) -> None:
+async def get_user_who_update_meet(message: types.Message, state: FSMContext) -> None:
     await state.update_data({"user_who": message.text})
     await message.answer(
         text="Отлично, этап изменения второго участника встречи",
@@ -172,7 +180,7 @@ async def get_user_who(message: types.Message, state: FSMContext) -> None:
 
 
 @admin_router.message(UpdateMeet.user_with)
-async def get_user_who(message: types.Message, state: FSMContext) -> None:
+async def get_user_who_update_meet(message: types.Message, state: FSMContext) -> None:
     await state.update_data({"user_with": message.text})
     await message.answer(
         text="Отлично, этап изменения описания встречи",
@@ -182,7 +190,7 @@ async def get_user_who(message: types.Message, state: FSMContext) -> None:
 
 
 @admin_router.message(UpdateMeet.description)
-async def get_user_who(message: types.Message, state: FSMContext) -> None:
+async def get_description_meet(message: types.Message, state: FSMContext) -> None:
     await state.update_data({"description": message.text})
     await message.answer(
         text="Отлично, этап изменения даты встречи",
@@ -192,10 +200,43 @@ async def get_user_who(message: types.Message, state: FSMContext) -> None:
 
 
 @admin_router.message(UpdateMeet.date)
-async def get_user_who(message: types.Message, state: FSMContext) -> None:
-    await state.update_data({"date": message.text})
-    await message.answer(text="Отлично, идет обработка...")
-    await state.clear()
+async def get_date_meet(message: types.Message, state: FSMContext) -> None:
+    try:
+        await state.update_data({"date": message.text})
+        await message.answer(text="Отлично, идет обработка...")
+
+        meet_data = await state.get_data()
+        user_who_data = None
+        user_with_data = None
+
+        if meet_data.get("user_who"):
+            user_who_data = await UserModelRepository().iam_created(
+                tg_id=None if meet_data["user_who"].startswith("+") else int(meet_data["user_who"]),
+                phone_number=meet_data["user_who"][1:] if meet_data["user_who"].startswith("+") else None
+            )
+        if meet_data.get("user_with"):
+            user_with_data = await UserModelRepository().iam_created(
+                tg_id=None if meet_data["user_with"].startswith("+") else int(meet_data["user_with"]),
+                phone_number=meet_data["user_with"][1:] if meet_data["user_with"].startswith("+") else None
+            )
+
+        old_meet = await MeetModelRepository().get_one(id_=int(meet_data.get("id_meet")))
+
+        if old_meet:
+            old_meet[0].id_who = user_who_data[0].id if user_who_data else old_meet[0].id_who
+            old_meet[0].id_with = user_with_data[0].id if user_with_data else old_meet[0].id_with
+            old_meet[0].description = meet_data.get("description") if meet_data.get("description") else old_meet[0].description
+            old_meet[0].date_meeting = datetime.datetime.strptime(meet_data.get("date"), "%Y-%m-%d %H:%M:%S")
+            is_updated = await MeetModelRepository().update(
+                update_data_model=old_meet[0]
+            )
+
+            if is_updated:
+                await message.answer("Данные встречи успешно были обновлены")
+    except Exception:
+        await message.answer("Не удалось обновить данные о встрече")
+    finally:
+        await state.clear()
 
 
 # User

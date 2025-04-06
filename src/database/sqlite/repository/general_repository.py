@@ -41,7 +41,6 @@ class GeneralRepository:
             await self.session.close()
             return True
         except Exception as ex:
-            print(ex)
             await self.session.close()
             return False
 
@@ -60,11 +59,15 @@ class GeneralRepository:
     async def update(self, update_data_model) -> bool:
         try:
             self.session = await DBWorker.get_session()
-            stmt = update(self.model).where(self.model.id == update_data_model.id).values(await update_data_model.read_model())
+            stmt = update(self.model).where(self.model.id == update_data_model.id).values({
+                k: v
+                for k, v in update_data_model.__dict__.items()
+                if not k.startswith("_") and k != "id"
+            })
             await self.session.execute(stmt)
             await self.session.commit()
-            await self.session.close()
             return True
-        except Exception:
-            await self.session.close()
+        except Exception as ex:
             return False
+        finally:
+            await self.session.close()
