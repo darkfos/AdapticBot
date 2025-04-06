@@ -56,3 +56,19 @@ class GeneralInlineButton:
         )
 
         return builder.as_markup()
+
+    @classmethod
+    async def profile_button(cls) -> InlineKeyboardBuilder:
+        builder: InlineKeyboardBuilder = InlineKeyboardBuilder()
+        builder.row(
+            InlineKeyboardButton(
+                text="Обновить номер телефона", callback_data="profile_update_phone",
+            )
+        )
+        builder.row(
+            InlineKeyboardButton(
+                text="Запланированные встречи", callback_data="profile_meets"
+            )
+        )
+
+        return builder.as_markup()

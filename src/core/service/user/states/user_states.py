@@ -6,3 +6,7 @@ class CreateUser(StatesGroup):
     user_phone = State()
     post = State()
     date_start = State()
+
+
+class UpdateUserPhone(StatesGroup):
+    new_user_phone = State()

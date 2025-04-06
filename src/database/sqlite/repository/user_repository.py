@@ -11,9 +11,13 @@ class UserModelRepository(GeneralRepository):
         super().__init__(UserModel)
 
     @classmethod
-    async def iam_created(cls, tg_id: int, phone_number: str):
+    async def iam_created(cls, tg_id: int = None, phone_number: str = None):
         session: AsyncSession = await DBWorker.get_session()
-        user_is_created = await session.execute(select(UserModel).where(UserModel.tg_id == tg_id))
+        if tg_id:
+            user_is_created = await session.execute(select(UserModel).where(UserModel.tg_id == tg_id))
+        else:
+            user_is_created = await session.execute(select(UserModel).where(UserModel.user_phone == phone_number))
+
         user_data = user_is_created.one_or_none()
         await session.close()
         if user_data: return True

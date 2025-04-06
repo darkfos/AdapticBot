@@ -1,9 +1,7 @@
-import datetime
-
-from aiogram import Router
+from aiogram import Router, Bot
 from aiogram.filters import CommandStart, Command  # noqa
 from aiogram.methods import EditMessageText, AnswerCallbackQuery
-from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove, FSInputFile
+from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove, FSInputFile, InputFile
 from aiogram.fsm.context import FSMContext
 from aiogram import F
 from typing import Union
@@ -20,7 +18,7 @@ from src.database.sqlite.models.user_model import UserModel
 # BUTTONS
 from src.core.buttons.inline import InlineButtonFabric
 
-
+bot: Bot = Bot(token=TelegramBotSettings().telegram_bot_token)
 command_router: Router = Router(name="commands")
 
 
@@ -136,12 +134,16 @@ async def profile_command(message: Message) -> None:
     user_data: UserModel = await UserModelRepository().get_one(id_=message.from_user.id)
     user_data = user_data[0]
 
-    await message.answer(
-        text=(f"<b>Мой профиль</b> \n\n" +
-              f"Имя: {message.from_user.first_name}\n\n"
-              f"Номер телефона: {user_data.user_phone if user_data.user_phone else 'Отсутствует'}\n\n"
-              f"Должность: {user_data.post if user_data.post else 'Отсутствует'}\n\n"
-              f"Дата вступления: {user_data.date_start}")
+    user_photo = await bot.get_user_profile_photos(user_id=user_data.tg_id)
+
+    await message.answer_photo(
+        photo=user_photo.photos[0][0].file_id,
+        caption=(f"\n<b>Мой профиль</b> \n\n" +
+              f"<b>Имя:</b> {message.from_user.first_name}\n\n"
+              f"<b>Номер телефона:</b> {user_data.user_phone if user_data.user_phone else 'Отсутствует'}\n\n"
+              f"<b>Должность:</b> {user_data.post if user_data.post else 'Отсутствует'}\n\n"
+              f"<b>Дата вступления:</b> {user_data.date_start}"),
+        reply_markup=await InlineButtonFabric.build_buttons("profile")
     )
 
 
