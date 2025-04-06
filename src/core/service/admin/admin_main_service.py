@@ -141,10 +141,16 @@ async def get_user_date(message: types.Message, state: FSMContext) -> None:
 async def get_user_who(message: types.Message, state: FSMContext) -> None:
     await state.update_data({"id_meet": message.text})
     await message.answer(text="Отлично, идет обработка....")
+
+    is_deleted = await MeetModelRepository().delete(id_=int(message.text))
+    if is_deleted:
+        await message.answer(text="Встреча была удалена")
+    else:
+        await message.answer(text="Не удалось удалить встречу")
     await state.clear()
 
 
-# ========DELETE========
+# ========UPDATE========
 @admin_router.message(UpdateMeet.id_meet)
 async def get_user_who(message: types.Message, state: FSMContext) -> None:
     await state.update_data({"id_meet": message.text})

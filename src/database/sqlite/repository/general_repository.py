@@ -48,14 +48,14 @@ class GeneralRepository:
     async def delete(self, id_: int) -> bool:
         try:
             self.session = await DBWorker.get_session()
-            stmt = delete(self.model).where(self.model.tg_id == id_)
+            stmt = delete(self.model).where(self.model.id == id_)
             await self.session.execute(stmt)
             await self.session.commit()
-            await self.session.close()
             return True
         except Exception:
-            await self.session.close()
             return False
+        finally:
+            await self.session.close()
 
     async def update(self, update_data_model) -> bool:
         try:
