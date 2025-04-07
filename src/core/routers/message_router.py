@@ -46,7 +46,7 @@ async def message_handler(message: types.Message, state: FSMContext):
                 reply_markup=ReplyKeyboardRemove()
             )
 
-        if not user_data[0].user_phone or not user_data[0].tg_id:
+        if not user_data.user_phone or not user_data.tg_id:
 
             user_data[0].user_phone = message.contact.phone_number[1:]
             user_data[0].tg_id = message.from_user.id
