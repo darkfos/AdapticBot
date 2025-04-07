@@ -23,14 +23,13 @@ async def message_handler(message: types.Message, state: FSMContext):
 
         if not user_data:
             user_data: UserModel = (await UserModelRepository().find_by_phone(
-                phone_number=message.contact.phone_number[1:]
+                phone_number=message.contact.phone_number
             ))
 
-        print(user_data, message.contact.phone_number)
 
         if user_data:
 
-            user_data[0].user_phone = message.contact.phone_number[1:]
+            user_data[0].user_phone = message.contact.phone_number
             user_data[0].tg_id = message.from_user.id
             user_data[0].user_name = message.from_user.first_name
 
@@ -51,7 +50,7 @@ async def message_handler(message: types.Message, state: FSMContext):
         if user_data:
             if not user_data[0].user_phone or not user_data[0].tg_id:
 
-                user_data[0].user_phone = message.contact.phone_number[1:]
+                user_data[0].user_phone = message.contact.phone_number
                 user_data[0].tg_id = message.from_user.id
 
                 is_updated = await UserModelRepository().update(user_data[0])

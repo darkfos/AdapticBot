@@ -98,7 +98,6 @@ async def clear_command(message: Message, state: FSMContext) -> None:
     await state.clear()
     await message.answer(
         text=CommandsTextsEnum.CLEAR_COMMAND_MESSAGE.value,
-        reply_markup=await ReplyButtonFabric.build_buttons("general_tests"),
     )
 
 
