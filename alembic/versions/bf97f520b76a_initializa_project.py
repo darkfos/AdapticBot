@@ -1,8 +1,8 @@
-"""add models
+"""initializa project
 
-Revision ID: 64d507178be5
-Revises: 1def1ad40bd2
-Create Date: 2025-04-06 15:48:55.344390
+Revision ID: bf97f520b76a
+Revises: 2b6c40afc75e
+Create Date: 2025-04-07 22:17:39.912317
 
 """
 
@@ -13,8 +13,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = "64d507178be5"
-down_revision: Union[str, None] = "1def1ad40bd2"
+revision: str = "bf97f520b76a"
+down_revision: Union[str, None] = "2b6c40afc75e"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

@@ -5,6 +5,7 @@ from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove, FSInputFi
 from aiogram.fsm.context import FSMContext
 from aiogram import F
 from typing import Union
+import os
 
 from src.core.buttons.reply import ReplyButtonFabric
 from src.enums.texts import GeneralCommands
@@ -30,8 +31,9 @@ async def start_command(message: Message) -> None:
     :return:
     """
 
-    start_message = await message.answer(
-        text=CommandsTextsEnum.START_COMMAND_MESSAGE.value,
+    start_message = await message.answer_photo(
+        photo=FSInputFile("src/static/img/telegram_icon.jpg"),
+        caption=CommandsTextsEnum.START_COMMAND_MESSAGE.value,
         reply_markup=await InlineButtonFabric.build_buttons("general_tests"),
     )
 
@@ -75,9 +77,11 @@ async def memo_command(message: Message) -> None:
     :return:
     """
 
-    await message.answer(
-        text=CommandsTextsEnum.MEMO_COMMAND_MESSAGE.value,
-        reply_markup=ReplyKeyboardRemove(),
+    photo_memo = FSInputFile(path="src/static/img/memo-img.jpg")
+
+    await message.answer_photo(
+        photo=photo_memo,
+        caption="<b>Памятка сотруднику</b>"
     )
 
 
@@ -138,11 +142,11 @@ async def profile_command(message: Message) -> None:
 
     await message.answer_photo(
         photo=user_photo.photos[0][0].file_id,
-        caption=(f"\n<b>Мой профиль</b> \n\n" +
-              f"<b>Имя:</b> {user_data.user_name}\n\n"
-              f"<b>Номер телефона:</b> {user_data.user_phone if user_data.user_phone else 'Отсутствует'}\n\n"
-              f"<b>Должность:</b> {user_data.post if user_data.post else 'Отсутствует'}\n\n"
-              f"<b>Дата вступления:</b> {user_data.date_start}"),
+        caption=(f"\n\n<b>Мой профиль</b> \n\n\n" +
+              f"🧑‍⚕ <b>Имя:</b> {user_data.user_name}\n\n"
+              f"📞  <b>Номер телефона:</b> {user_data.user_phone if user_data.user_phone else 'Отсутствует'}\n\n"
+              f"🧑‍⚕️ <b>Должность:</b> {user_data.post if user_data.post else 'Отсутствует'}\n\n"
+              f"⏰  <b>Дата вступления:</b> {user_data.date_start}"),
         reply_markup=await InlineButtonFabric.build_buttons("profile")
     )
 
@@ -159,26 +163,31 @@ async def query_to_commands(
 
     match message.data:
         case "/start":
-            return await message.message.edit_text(
-                text=CommandsTextsEnum.HELP_COMMAND_MESSAGE.value,
+            return await message.message.edit_caption(
+                caption=CommandsTextsEnum.HELP_COMMAND_MESSAGE.value,
                 reply_markup=await InlineButtonFabric.build_buttons("back"),
             )
         case "/memo":
-            return await message.message.edit_text(
-                text=CommandsTextsEnum.MEMO_COMMAND_MESSAGE.value,
+            await message.message.edit_caption(
+                caption=CommandsTextsEnum.MEMO_COMMAND_MESSAGE.value,
                 reply_markup=await InlineButtonFabric.build_buttons("back"),
             )
+
+            return await message.message.answer_photo(
+                photo=FSInputFile("src/static/img/memo-img.jpg"),
+                caption="<b>Слайд с контактами</b>"
+            )
         case "/info":
-            return await message.message.edit_text(
-                text=CommandsTextsEnum.INFO_COMMAND_MESSAGE.value,
+            return await message.message.edit_caption(
+                caption=CommandsTextsEnum.INFO_COMMAND_MESSAGE.value,
                 reply_markup=await InlineButtonFabric.build_buttons("back"),
             )
         case "/back":
-            return await message.message.edit_text(
-                text=CommandsTextsEnum.START_COMMAND_MESSAGE.value,
+            return await message.message.edit_caption(
+                caption=CommandsTextsEnum.START_COMMAND_MESSAGE.value,
                 reply_markup=await InlineButtonFabric.build_buttons(
                     "general_tests"
-                ),  # noqa
+                )
             )
         case "_":
             return await message.answer(text="Опция не найдена..")

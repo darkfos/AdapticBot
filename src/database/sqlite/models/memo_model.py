@@ -22,6 +22,9 @@ class MeetModel(MainBase):
     # Дата встречи
     date_meeting: Mapped[datetime.datetime] = mapped_column(type_=DateTime, nullable=True, index=False, unique=False)
 
+    # Формат уведомления
+    time_format: Mapped[int] = mapped_column(type_=Integer, nullable=True)
+
     user_who_data: Mapped["UserModel"] = relationship("UserModel", foreign_keys=[id_who], back_populates="meets_who_user", uselist=False)
     user_with_data: Mapped["UserModel"] = relationship("UserModel", foreign_keys=[id_with], back_populates="meets_with_user", uselist=False)
 

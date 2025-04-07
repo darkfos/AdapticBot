@@ -12,7 +12,9 @@ from src.database.sqlite.repository.user_repository import UserModelRepository
 from src.database.sqlite.models.user_model import UserModel
 from src.core.service.utils.pagination import Pagination
 from src.database.sqlite.models.memo_model import MeetModel
+from src.notifications.notifications_service import send_notification_from_admin_panel
 from src.settings import TelegramBotSettings
+
 
 admin_router: Router = Router(name="admin")
 bot: Bot = Bot(TelegramBotSettings().telegram_bot_token)
@@ -52,22 +54,22 @@ async def persona_menu_list(callback_data: types.CallbackQuery) -> None:
     if callback_data.data.startswith("persona_page_next_"):
         users_data = await user_pagination.get_next(UserModelRepository(), int(callback_data.data.split("_")[-1]))
         await callback_data.message.edit_text(
-            f"Пользователь {users_data[0].user_name}\n\n"
-            f"<b>Телефон: </b> {users_data[0].user_phone}\n\n"
-            f"<b>Должность: </b> {users_data[0].post}\n\n"
-            f"<b>Telegram ID: </b> {users_data[0].tg_id}\n\n"
-            f"<b>Дата вступления в должность: </b> {users_data[0].date_start}",
+            f"🧑‍⚕️ Пользователь {users_data[0].user_name}\n\n"
+            f"📞  <b>Телефон: </b> {users_data[0].user_phone}\n\n"
+            f"🧑‍⚕️ <b>Должность: </b> {users_data[0].post}\n\n"
+            f"🪧 <b>Telegram ID: </b> {users_data[0].tg_id}\n\n"
+            f"⏰ <b>Дата вступления в должность: </b> {users_data[0].date_start}",
             reply_markup=users_data[1]
         )
 
     if callback_data.data.startswith("persona_page_back_"):
         users_data = await user_pagination.get_previously(UserModelRepository(), int(callback_data.data.split("_")[-1]))
         await callback_data.message.edit_text(
-            f"Пользователь {users_data[0].user_name}\n\n"
-            f"<b>Телефон: </b> {users_data[0].user_phone}\n\n"
-            f"<b>Должность: </b> {users_data[0].post}\n\n"
-            f"<b>Telegram ID: </b> {users_data[0].tg_id}\n\n"
-            f"<b>Дата вступления в должность: </b> {users_data[0].date_start}",
+            f"🧑‍⚕️ Пользователь {users_data[0].user_name}\n\n"
+            f"📞  <b>Телефон: </b> {users_data[0].user_phone}\n\n"
+            f"🧑‍⚕️ <b>Должность: </b> {users_data[0].post}\n\n"
+            f"🪧 <b>Telegram ID: </b> {users_data[0].tg_id}\n\n"
+            f"⏰ <b>Дата вступления в должность: </b> {users_data[0].date_start}",
             reply_markup=users_data[1]
         )
 
@@ -83,13 +85,13 @@ async def meets_callback_handler(callback_data: types.CallbackQuery, state: FSMC
                 # TODO добавить пагинацию для списка встреч
                 meets_data = await Pagination().get_data(MeetModelRepository())
                 await callback_data.message.answer(
-                    f"Встречи (страница {meets_data[-2]})\n\n"
-                    f"<b>Идентификатор встречи: </b> {meets_data[0].id}\n\n"
-                    f"<b>Кто</b>: {meets_data[0].user_who_data.user_name} ({meets_data[0].user_who_data.user_phone})\n\n"
-                    f"<b>С кем</b>: {meets_data[0].user_with_data.user_name} ({meets_data[0].user_with_data.user_phone})\n\n"
-                    f"<b>Дата</b>: {meets_data[0].date_meeting}\n\n"
-                    f"<b>Описание встречи</b>: {meets_data[0].description[:25]}...\n\n"
-                    f"<b><i>Количество актуальных встреч: {meets_data[-1]}</i></b>",
+                    f"📝 Встречи (страница {meets_data[-2]})\n\n"
+                    f"🪧 <b>Идентификатор встречи: </b> {meets_data[0].id}\n\n"
+                    f"🧑‍⚕️ <b>Кто</b>: {meets_data[0].user_who_data.user_name} ({meets_data[0].user_who_data.user_phone})\n\n"
+                    f"🧑‍⚕️ <b>С кем</b>: {meets_data[0].user_with_data.user_name} ({meets_data[0].user_with_data.user_phone})\n\n"
+                    f"📅  <b>Дата</b>: {meets_data[0].date_meeting}\n\n"
+                    f"📑  <b>Описание встречи</b>: {meets_data[0].description[:25]}...\n\n"
+                    f"📚 <b><i>Количество актуальных встреч: {meets_data[-1]}</i></b>",
                     reply_markup=meets_data[1]
                 )
 
@@ -113,14 +115,51 @@ async def meets_callback_handler(callback_data: types.CallbackQuery, state: FSMC
             await state.set_state(state=CreateUser.tg_id)
         case "admin_panel_all_personal":
             data_persona = await Pagination().get_data(UserModelRepository())
-            await callback_data.message.answer(
-                f"Пользователь {data_persona[0].user_name}\n\n"
-                f"<b>Телефон: </b> {data_persona[0].user_phone}\n\n"
-                f"<b>Должность: </b> {data_persona[0].post}\n\n"
-                f"<b>Telegram ID: </b> {data_persona[0].tg_id}\n\n"
-                f"<b>Дата вступления в должность: </b> {data_persona[0].date_start}",
+            return await callback_data.message.answer(
+                f"🧑‍⚕️ Пользователь {data_persona[0].user_name}\n\n"
+                f"📞  <b>Телефон: </b> {data_persona[0].user_phone}\n\n"
+                f"🧑‍⚕️ <b>Должность: </b> {data_persona[0].post}\n\n"
+                f"🪧 <b>Telegram ID: </b> {data_persona[0].tg_id}\n\n"
+                f"⏰  <b>Дата вступления в должность: </b> {data_persona[0].date_start}",
                 reply_markup=data_persona[1]
             )
+        case "send_notifications":
+            await send_notification_from_admin_panel()
+
+    if callback_data.data.startswith("notification"):
+        try:
+            message = callback_data.message
+
+            state_data = await state.get_data()
+
+            user_who_data = await UserModelRepository().iam_created(
+                tg_id=None if state_data["user_who"].startswith("+") else int(state_data["user_who"]),
+                phone_number=state_data["user_who"][1:] if state_data["user_who"].startswith("+") else None
+            )
+
+            user_with_data = await UserModelRepository().iam_created(
+                tg_id=None if state_data["user_with"].startswith("+") else int(state_data["user_with"]),
+                phone_number=state_data["user_with"][1:] if state_data["user_with"].startswith("+") else None
+            )
+
+            if user_who_data and user_with_data:
+
+                is_added = await MeetModelRepository().create(MeetModel(
+                    id_who=user_who_data[0].id,
+                    id_with=user_with_data[0].id,
+                    description=state_data.get("description"),
+                    time_format=int(callback_data.data.split("_")[-1]),
+                    date_meeting=datetime.datetime.strptime(state_data.get("date"), "%Y-%m-%d %H:%M:%S")
+                ))
+
+                if is_added:
+                    await message.answer(text="Встреча назначена!")
+            else:
+                await message.answer(text="Не удалось назначить встречу, не были найдены указанные сотрудники")
+        except Exception:
+            await message.answer(text="Не удалось создать встречу, проверьте введенный формат даты")
+        finally:
+            await state.clear()
 
 
 # States
@@ -145,7 +184,7 @@ async def get_user_with(message: types.Message, state: FSMContext) -> None:
 
 
 @admin_router.message(CreateMeet.description)
-async def get_user_description(message: types.Message, state: FSMContext) -> None:
+async def get_meet_description(message: types.Message, state: FSMContext) -> None:
     await state.update_data({"description": message.text})
     await message.answer(
         text="Отлично, назначьте дату\n\nФормат 2025-10-10 10:20:00",
@@ -154,43 +193,17 @@ async def get_user_description(message: types.Message, state: FSMContext) -> Non
 
 
 @admin_router.message(CreateMeet.date)
-async def get_user_date(message: types.Message, state: FSMContext) -> None:
-    try:
-        await state.update_data({"date": message.text})
+async def get_meet_date(message: types.Message, state: FSMContext) -> None:
+    await state.update_data({"date": message.text})
+    await message.answer(
+        text="Пожалуйста выберите формат отправки уведомлений",
+        reply_markup=await InlineButtonFabric.build_buttons("notifications")
+    )
 
-        state_data = await state.get_data()
-
-        user_who_data = await UserModelRepository().iam_created(
-            tg_id=None if state_data["user_who"].startswith("+") else int(state_data["user_who"]),
-            phone_number=state_data["user_who"][1:] if state_data["user_who"].startswith("+") else None
-        )
-
-        user_with_data = await UserModelRepository().iam_created(
-            tg_id=None if state_data["user_with"].startswith("+") else int(state_data["user_with"]),
-            phone_number=state_data["user_with"][1:] if state_data["user_with"].startswith("+") else None
-        )
-
-        if user_who_data and user_with_data:
-
-            is_added = await MeetModelRepository().create(MeetModel(
-                id_who=user_who_data[0].id,
-                id_with=user_with_data[0].id,
-                description=state_data.get("description"),
-                date_meeting=datetime.datetime.strptime(state_data.get("date"), "%Y-%m-%d %H:%M:%S")
-            ))
-
-            if is_added:
-                await message.answer(text="Встреча назначена!")
-        else:
-            await message.answer(text="Не удалось назначить встречу, не были найдены указанные сотрудники")
-    except Exception:
-        await message.answer(text="Не удалось создать встречу, проверьте введенный формат даты")
-    finally:
-        await state.clear()
 
 # ========DELETE========
 @admin_router.message(DeleteMeet.id_meet)
-async def get_user_who(message: types.Message, state: FSMContext) -> None:
+async def get_id_meet(message: types.Message, state: FSMContext) -> None:
     await state.update_data({"id_meet": message.text})
     await message.answer(text="Отлично, идет обработка....")
 
@@ -299,7 +312,7 @@ async def get_phone_user(message: types.Message, state: FSMContext) -> None:
 @admin_router.message(CreateUser.post)
 async def get_post_user(message: types.Message, state: FSMContext) -> None:
     await state.update_data({"post": message.text})
-    await message.answer(text='Отлично, теперь введите дату вступления в должность сотрудника')
+    await message.answer(text='Отлично, теперь введите <b>дату</b> вступления в должность сотрудника\n\n(Формат 2025-10-10)')
     await state.set_state(CreateUser.date_start)
 
 @admin_router.message(CreateUser.date_start)

@@ -19,6 +19,9 @@ class Pagination:
             all_data = await model.get_all_by_user(self.tg_id)
         self.meets = all_data
 
+        if not all_data:
+            return ()
+
         inline_builder = InlineKeyboardBuilder()
 
         if (self.page < len(self.meets)-1):

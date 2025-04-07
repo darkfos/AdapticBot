@@ -24,6 +24,8 @@ class InlineButtonFabric:
                 return await GeneralInlineButton.skip_button()
             case "profile":
                 return await GeneralInlineButton.profile_button()
+            case "notifications":
+                return await GeneralInlineButton.notification_button()
             case _:
                 raise InlineButtonException(
                     "not found arg for create inline btn"

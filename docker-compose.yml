@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  bot:
+    build: .
+    environment:
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - DB_NAME=bot.db
+    depends_on:
+      - redis
+    restart: always
+
+  redis:
+    ports:
+      - 6378:6378
+    image: redis:latest
+    restart: always
+    volumes:
+      - redis-data:/data
+
+volumes:
+  redis-data:
+    driver: local

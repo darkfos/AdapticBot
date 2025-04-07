@@ -9,9 +9,6 @@ class GeneralInlineButton:
     async def start_btn_command(cls) -> InlineKeyboardBuilder:
         builder: InlineKeyboardBuilder = InlineKeyboardBuilder()
         builder.row(
-            InlineKeyboardButton(text="🆘 Помощь", callback_data="/help"),
-        )
-        builder.row(
             InlineKeyboardButton(
                 text="ℹ️ Краткая информация", callback_data="/info"
             ),  # noqa
@@ -46,6 +43,9 @@ class GeneralInlineButton:
         builder.row(
             InlineKeyboardButton(text=emoji.emojize("👤 Сотрудники"), callback_data="admin_panel_all_personal")
         )
+        builder.row(
+            InlineKeyboardButton(text="💌 Отослать уведомления", callback_data="send_notifications")
+        )
 
         return builder.as_markup()
 
@@ -65,12 +65,41 @@ class GeneralInlineButton:
         builder: InlineKeyboardBuilder = InlineKeyboardBuilder()
         builder.row(
             InlineKeyboardButton(
-                text="Обновить номер телефона", callback_data="profile_update_phone",
+                text="📞 Обновить номер телефона", callback_data="profile_update_phone",
             )
         )
         builder.row(
             InlineKeyboardButton(
-                text="Запланированные встречи", callback_data="profile_meets"
+                text="📝 Запланированные встречи", callback_data="profile_meets"
+            )
+        )
+
+        return builder.as_markup()
+
+    @classmethod
+    async def notification_button(cls) -> InlineKeyboardBuilder:
+        builder: InlineKeyboardBuilder = InlineKeyboardBuilder()
+        builder.row(
+            InlineKeyboardButton(
+                text="Каждый день в 9-00", callback_data="notification_btn_every_1",
+            )
+        )
+
+        builder.row(
+            InlineKeyboardButton(
+                text="Каждые 3 дня в 9-00", callback_data="notification_btn_every_3"
+            )
+        )
+
+        builder.row(
+            InlineKeyboardButton(
+                text="Каждую неделю в 9-00", callback_data="notification_btn_every_7"
+            )
+        )
+
+        builder.row(
+            InlineKeyboardButton(
+                text="Каждый месяц в 9-00", callback_data="notification_btn_every_30"
             )
         )
 

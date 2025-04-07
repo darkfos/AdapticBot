@@ -6,6 +6,7 @@ class CreateMeet(StatesGroup):
     user_with = State()
     description = State()
     date = State()
+    time_notification = State()
 
 
 class DeleteMeet(StatesGroup):

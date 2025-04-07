@@ -1,8 +1,8 @@
-"""init
+"""init project
 
-Revision ID: 1def1ad40bd2
+Revision ID: 2b6c40afc75e
 Revises: 
-Create Date: 2025-04-06 15:48:38.950420
+Create Date: 2025-04-07 22:17:16.035761
 
 """
 
@@ -13,7 +13,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = "1def1ad40bd2"
+revision: str = "2b6c40afc75e"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -61,6 +61,7 @@ def upgrade() -> None:
         sa.Column("id_with", sa.Integer(), nullable=False),
         sa.Column("description", sa.Text(), nullable=True),
         sa.Column("date_meeting", sa.DateTime(), nullable=True),
+        sa.Column("time_format", sa.Integer(), nullable=True),
         sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),
         sa.ForeignKeyConstraint(
             ["id_who"],
