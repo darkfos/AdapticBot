@@ -5,7 +5,7 @@ from aiogram.fsm.context import FSMContext
 
 from src.core.filters.admin_filter import AdminFilter
 from src.database.sqlite.repository.meet_repository import MeetModelRepository
-from src.core.service.admin.states.general_states import CreateMeet, DeleteMeet, UpdateMeet
+from src.core.service.admin.states.general_states import CreateMeet, DeleteMeet, UpdateMeet, DeleteUser
 from src.core.service.user.states.user_states import CreateUser
 from src.core.buttons.inline import InlineButtonFabric
 from src.database.sqlite.repository.user_repository import UserModelRepository
@@ -113,6 +113,11 @@ async def meets_callback_handler(callback_data: types.CallbackQuery, state: FSMC
                 reply_markup=await InlineButtonFabric.build_buttons("skip")
             )
             await state.set_state(state=CreateUser.tg_id)
+        case "admin_panel_delete_persona":
+            await callback_data.message.answer(
+                text="Удаление сотрудника...\n\nПожалуйста введите <b>telegram id</b> сотрудника",
+            )
+            await state.set_state(DeleteUser.id_user)
         case "admin_panel_all_personal":
             data_persona = await Pagination().get_data(UserModelRepository())
             return await callback_data.message.answer(
@@ -295,6 +300,16 @@ async def get_date_meet(message: types.Message, state: FSMContext) -> None:
     finally:
         await state.clear()
 
+# Delete User
+@admin_router.message(DeleteUser.id_user)
+async def delete_user(message: types.Message, state: FSMContext) -> None:
+    await state.update_data({"id_user": message.text})
+    is_deleted = await UserModelRepository().delete_user(int(message.text))
+    if is_deleted:
+        await message.answer("Пользователь был удален.")
+        return
+    await message.answer("Не удалось удалить пользователя")
+    await state.clear()
 
 # User
 @admin_router.message(CreateUser.tg_id)

@@ -22,6 +22,14 @@ class MeetModel(MainBase):
     # Дата встречи
     date_meeting: Mapped[datetime.datetime] = mapped_column(type_=DateTime, nullable=True, index=False, unique=False)
 
+    # Дата последнего уведомления
+    date_last_meeting: Mapped[datetime.datetime] = mapped_column(
+        type_=DateTime,
+        nullable=True,
+        index=False,
+        unique=False
+    )
+
     # Формат уведомления
     time_format: Mapped[int] = mapped_column(type_=Integer, nullable=True)
 

@@ -41,6 +41,9 @@ class GeneralInlineButton:
             InlineKeyboardButton(text=emoji.emojize("👤 Добавить сотрудника"), callback_data="admin_panel_add_persona")
         )
         builder.row(
+            InlineKeyboardButton(text="👤 Удалить сотрудника", callback_data="admin_panel_delete_persona")
+        )
+        builder.row(
             InlineKeyboardButton(text=emoji.emojize("👤 Сотрудники"), callback_data="admin_panel_all_personal")
         )
         builder.row(

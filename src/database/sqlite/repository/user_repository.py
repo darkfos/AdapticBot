@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.database.sqlite.repository.general_repository import GeneralRepository
 from src.database.sqlite.models.user_model import UserModel
 from src.database.sqlite.db_worker import DBWorker
-from sqlalchemy import select
+from sqlalchemy import select, delete
 
 
 class UserModelRepository(GeneralRepository):
@@ -30,3 +30,16 @@ class UserModelRepository(GeneralRepository):
         user_data = user_is_created.one_or_none()
         await session.close()
         return user_data
+
+    @classmethod
+    async def delete_user(cls, tg_id: int) -> bool:
+        session: AsyncSession = await DBWorker.get_session()
+        try:
+            user_is_deleted = delete(UserModel).where(UserModel.tg_id == tg_id)
+            await session.execute(user_is_deleted)
+            await session.commit()
+            return True
+        except Exception as ex:
+            return False
+        finally:
+            await session.close()

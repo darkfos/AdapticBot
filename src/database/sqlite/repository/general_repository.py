@@ -25,12 +25,16 @@ class GeneralRepository:
         return result.one_or_none()
 
     async def get_all(self):
-        self.session = await DBWorker.get_session()
-        stmt = select(self.model)
-        result = await self.session.execute(stmt)
-        result = result.scalars().all()
-        await self.session.close()
-        return result
+        try:
+            self.session = await DBWorker.get_session()
+            stmt = select(self.model)
+            result = await self.session.execute(stmt)
+            result = result.scalars().all()
+            return result
+        except Exception as ex:
+            pass
+        finally:
+            await self.session.close()
 
     async def create(self, new_model) -> bool:
         try:
@@ -59,11 +63,7 @@ class GeneralRepository:
     async def update(self, update_data_model) -> bool:
         try:
             self.session = await DBWorker.get_session()
-            stmt = update(self.model).where(self.model.id == update_data_model.id).values({
-                k: v
-                for k, v in update_data_model.__dict__.items()
-                if not k.startswith("_") and k != "id"
-            })
+            stmt = update(self.model).where(self.model.id == update_data_model.id).values(await update_data_model.read_model())
             await self.session.execute(stmt)
             await self.session.commit()
             return True
