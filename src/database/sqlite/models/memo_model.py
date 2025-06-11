@@ -17,37 +17,41 @@ class MeetModel(MainBase):
     id_with: Mapped[int] = mapped_column(ForeignKey("usermodel.id"), type_=Integer)
 
     # Пояснение к встрече
-    description: Mapped[str] = mapped_column(type_=Text, nullable=True, index=False, unique=False)
+    description: Mapped[str] = mapped_column(
+        type_=Text, nullable=True, index=False, unique=False
+    )
 
     # Дата встречи
-    date_meeting: Mapped[datetime.datetime] = mapped_column(type_=DateTime, nullable=True, index=False, unique=False)
+    date_meeting: Mapped[datetime.datetime] = mapped_column(
+        type_=DateTime, nullable=True, index=False, unique=False
+    )
 
     # Дата последнего уведомления
     date_last_meeting: Mapped[datetime.datetime] = mapped_column(
-        type_=DateTime,
-        nullable=True,
-        index=False,
-        unique=False
+        type_=DateTime, nullable=True, index=False, unique=False
     )
 
     # Формат уведомления
     time_format: Mapped[int] = mapped_column(type_=Integer, nullable=True)
 
-    user_who_data: Mapped["UserModel"] = relationship("UserModel", foreign_keys=[id_who], back_populates="meets_who_user", uselist=False)
-    user_with_data: Mapped["UserModel"] = relationship("UserModel", foreign_keys=[id_with], back_populates="meets_with_user", uselist=False)
+    user_who_data: Mapped["UserModel"] = relationship(
+        "UserModel",
+        foreign_keys=[id_who],
+        back_populates="meets_who_user",
+        uselist=False,
+    )
+    user_with_data: Mapped["UserModel"] = relationship(
+        "UserModel",
+        foreign_keys=[id_with],
+        back_populates="meets_with_user",
+        uselist=False,
+    )
 
     def __str__(self):
-        return str({
-            k: v
-            for k,v in self.__dict__.items()
-        })
+        return str({k: v for k, v in self.__dict__.items()})
 
     def __repr__(self):
         return self.__str__()
 
     async def read_model(self) -> dict[str, Any]:
-        return {
-            k: v
-            for k,v in self.__dict__.items()
-            if not k.startswith("_")
-        }
+        return {k: v for k, v in self.__dict__.items() if not k.startswith("_")}

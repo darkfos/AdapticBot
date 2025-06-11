@@ -2,6 +2,7 @@ from enum import Enum
 from typing import Final
 from emoji import emojize
 
+
 class GeneralCommands(Enum):
 
     START: str = "start"
@@ -33,7 +34,9 @@ class CommandsTextsEnum(Enum):
 📝 <b>Храню ссылки на регламенты, внутренние документы, чек-листы</b>
     """  # noqa
 
-    HELP_COMMAND_MESSAGE: Final[str] = """
+    HELP_COMMAND_MESSAGE: Final[
+        str
+    ] = """
 <b>Пункт помощи.</b>\n\n
 
 🤖 <b>Команды</b>\n\n
@@ -69,10 +72,12 @@ class CommandsTextsEnum(Enum):
 необходимо сделать <b>всем</b> сотрудникам которые были недавно добавлены в систему.
     """
 
-    INFO_COMMAND_MESSAGE: Final[str] = emojize("Добро пожаловать в матрицу коммуникаций!\n\n<b>Ссылки на наши ресурсы:</b>\n\n" \
-                                        f":star: Instagram - {InfoData.instagram_url}\n\n" \
-                                        f":star: Vk - {InfoData.vk_url}\n\n" \
-                                        f":star: Cloud - {InfoData.cloud}\n\n")
+    INFO_COMMAND_MESSAGE: Final[str] = emojize(
+        "Добро пожаловать в матрицу коммуникаций!\n\n<b>Ссылки на наши ресурсы:</b>\n\n"
+        f":star: Instagram - {InfoData.instagram_url}\n\n"
+        f":star: Vk - {InfoData.vk_url}\n\n"
+        f":star: Cloud - {InfoData.cloud}\n\n"
+    )
 
     MEMO_COMMAND_MESSAGE: Final[str] = "<b>Памятка новому сотруднику</b>"
 

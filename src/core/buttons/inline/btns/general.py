@@ -30,24 +30,52 @@ class GeneralInlineButton:
     async def admin_panel_command(cls) -> InlineKeyboardBuilder:
         builder: InlineKeyboardBuilder = InlineKeyboardBuilder()
         builder.row(
-            InlineKeyboardButton(text=emoji.emojize(":calendar: Запланированные встречи"), callback_data="admin_panel_meets"),
-            InlineKeyboardButton(text=emoji.emojize("➕:calendar: Назначить встречу"), callback_data="admin_panel_create_meets"),
+            InlineKeyboardButton(
+                text=emoji.emojize(":calendar: Запланированные встречи"),
+                callback_data="admin_panel_meets",
+            ),
+            InlineKeyboardButton(
+                text=emoji.emojize("➕:calendar: Назначить встречу"),
+                callback_data="admin_panel_create_meets",
+            ),
         )
         builder.row(
-            InlineKeyboardButton(text=emoji.emojize(":cross_mark::calendar: Удалить встречу"), callback_data="admin_panel_delete_meets"),
-            InlineKeyboardButton(text=emoji.emojize(":pencil::calendar: Изменить данные о встрече"), callback_data="admin_panel_change_meets"),
+            InlineKeyboardButton(
+                text=emoji.emojize(":cross_mark::calendar: Удалить встречу"),
+                callback_data="admin_panel_delete_meets",
+            ),
+            InlineKeyboardButton(
+                text=emoji.emojize(":pencil::calendar: Изменить данные о встрече"),
+                callback_data="admin_panel_change_meets",
+            ),
         )
         builder.row(
-            InlineKeyboardButton(text=emoji.emojize("👤 Добавить сотрудника"), callback_data="admin_panel_add_persona")
+            InlineKeyboardButton(
+                text=emoji.emojize("👤 Добавить сотрудника"),
+                callback_data="admin_panel_add_persona",
+            )
         )
         builder.row(
-            InlineKeyboardButton(text="👤 Удалить сотрудника", callback_data="admin_panel_delete_persona")
+            InlineKeyboardButton(
+                text=emoji.emojize("👤 Добавить администратора"),
+                callback_data="admin_panel_add_admin_persona",
+            )
         )
         builder.row(
-            InlineKeyboardButton(text=emoji.emojize("👤 Сотрудники"), callback_data="admin_panel_all_personal")
+            InlineKeyboardButton(
+                text="👤 Удалить сотрудника", callback_data="admin_panel_delete_persona"
+            )
         )
         builder.row(
-            InlineKeyboardButton(text="💌 Отослать уведомления", callback_data="send_notifications")
+            InlineKeyboardButton(
+                text=emoji.emojize("👤 Сотрудники"),
+                callback_data="admin_panel_all_personal",
+            )
+        )
+        builder.row(
+            InlineKeyboardButton(
+                text="💌 Отослать уведомления", callback_data="send_notifications"
+            )
         )
 
         return builder.as_markup()
@@ -55,11 +83,7 @@ class GeneralInlineButton:
     @classmethod
     async def skip_button(cls) -> InlineKeyboardBuilder:
         builder: InlineKeyboardBuilder = InlineKeyboardBuilder()
-        builder.row(
-            InlineKeyboardButton(
-                text="Пропустить", callback_data="skip"
-            )
-        )
+        builder.row(InlineKeyboardButton(text="Пропустить", callback_data="skip"))
 
         return builder.as_markup()
 
@@ -68,7 +92,8 @@ class GeneralInlineButton:
         builder: InlineKeyboardBuilder = InlineKeyboardBuilder()
         builder.row(
             InlineKeyboardButton(
-                text="📞 Обновить номер телефона", callback_data="profile_update_phone",
+                text="📞 Обновить номер телефона",
+                callback_data="profile_update_phone",
             )
         )
         builder.row(
@@ -84,7 +109,8 @@ class GeneralInlineButton:
         builder: InlineKeyboardBuilder = InlineKeyboardBuilder()
         builder.row(
             InlineKeyboardButton(
-                text="Каждый день в 9-00", callback_data="notification_btn_every_1",
+                text="Каждый день в 9-00",
+                callback_data="notification_btn_every_1",
             )
         )
 

@@ -12,23 +12,37 @@ from src.database.sqlite.models.main_model import MainBase
 class UserModel(MainBase):
 
     id_user_type: Mapped[int] = mapped_column(ForeignKey("usertypemodel.id"))
-    user_name: Mapped[str] = mapped_column(type_=String(length=255), nullable=False, index=False)
-    user_phone: Mapped[str] = mapped_column(type_=String(length=25), nullable=True, index=True)
+    user_name: Mapped[str] = mapped_column(
+        type_=String(length=255), nullable=False, index=False
+    )
+    user_phone: Mapped[str] = mapped_column(
+        type_=String(length=25), nullable=True, index=True
+    )
     post: Mapped[str] = mapped_column(type_=String(200), nullable=True, index=True)
     tg_id: Mapped[int] = mapped_column(type_=BigInteger, nullable=True, index=True)
-    date_start: Mapped[datetime.date] = mapped_column(type_=Date, nullable=True, index=False, default=datetime.date.today())
-
+    date_start: Mapped[datetime.date] = mapped_column(
+        type_=Date, nullable=True, index=False, default=datetime.date.today()
+    )
 
     # Relations
-    user_type: Mapped["UserTypeModel"] = relationship("UserTypeModel", back_populates="users", uselist=False)
-    meets_who_user: Mapped[list["MeetModel"]] = relationship("MeetModel", back_populates="user_who_data", uselist=True, foreign_keys="[MeetModel.id_who]")
-    meets_with_user: Mapped[list["MeetModel"]] = relationship("MeetModel", back_populates="user_with_data", uselist=True, foreign_keys="[MeetModel.id_with]")
+    user_type: Mapped["UserTypeModel"] = relationship(
+        "UserTypeModel", back_populates="users", uselist=False
+    )
+    meets_who_user: Mapped[list["MeetModel"]] = relationship(
+        "MeetModel",
+        back_populates="user_who_data",
+        uselist=True,
+        foreign_keys="[MeetModel.id_who]",
+    )
+    meets_with_user: Mapped[list["MeetModel"]] = relationship(
+        "MeetModel",
+        back_populates="user_with_data",
+        uselist=True,
+        foreign_keys="[MeetModel.id_with]",
+    )
 
     def __str__(self) -> str:
-        return str({
-            k: v
-            for k, v in self.__dict__.items()
-        })
+        return str({k: v for k, v in self.__dict__.items()})
 
     def __repr__(self) -> str:
         return self.__str__()
@@ -36,6 +50,6 @@ class UserModel(MainBase):
     async def read_model(self) -> dict[str, Any]:
         return {
             k: v
-            for k,v in self.__dict__.items()
+            for k, v in self.__dict__.items()
             if k not in ("_sa_instance_state", "id") and not k.startswith("_")
         }

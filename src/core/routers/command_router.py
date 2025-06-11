@@ -1,7 +1,13 @@
 from aiogram import Router, Bot
 from aiogram.filters import CommandStart, Command  # noqa
 from aiogram.methods import EditMessageText, AnswerCallbackQuery
-from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove, FSInputFile, InputFile
+from aiogram.types import (
+    Message,
+    CallbackQuery,
+    ReplyKeyboardRemove,
+    FSInputFile,
+    InputFile,
+)
 from aiogram.fsm.context import FSMContext
 from aiogram import F
 from typing import Union
@@ -65,7 +71,7 @@ async def info_command(message: Message) -> None:
     await message.answer_document(
         document=FSInputFile(path="src/static/img/commutication_matrics.pdf"),
         caption=CommandsTextsEnum.INFO_COMMAND_MESSAGE.value,
-        reply_markup=ReplyKeyboardRemove()
+        reply_markup=ReplyKeyboardRemove(),
     )
 
 
@@ -79,10 +85,7 @@ async def memo_command(message: Message) -> None:
 
     photo_memo = FSInputFile(path="src/static/img/memo-img.jpg")
 
-    await message.answer_photo(
-        photo=photo_memo,
-        caption="<b>Памятка сотруднику</b>"
-    )
+    await message.answer_photo(photo=photo_memo, caption="<b>Памятка сотруднику</b>")
 
 
 @command_router.message(Command(GeneralCommands.CLEAR.value))
@@ -101,10 +104,7 @@ async def clear_command(message: Message, state: FSMContext) -> None:
     )
 
 
-@command_router.message(
-    AdminFilter(),
-    Command(GeneralCommands.ADMIN.value)
-)
+@command_router.message(AdminFilter(), Command(GeneralCommands.ADMIN.value))
 async def admin_command(message: Message) -> None:
     """
     Admin command
@@ -115,38 +115,44 @@ async def admin_command(message: Message) -> None:
 
     if message.from_user.id in TelegramBotSettings().admins_list:
         from src.enums.texts.admin_panel import admin_panel_text
+
         await message.answer(
             text=await admin_panel_text(message.from_user.first_name),
-            reply_markup=await InlineButtonFabric.build_buttons("admin")
+            reply_markup=await InlineButtonFabric.build_buttons("admin"),
         )
 
     else:
-        await message.answer(
-            text="Доступ к админ панели запрещен."
-        )
+        await message.answer(text="Доступ к админ панели запрещен.")
 
 
 @command_router.message(Command(GeneralCommands.SUCCESS.value))
 async def success_persona(message: Message) -> None:
-    await message.answer(text="Для активации аккаунта, нажмите на кнопку в нижней панели.", reply_markup=await ReplyButtonFabric.build_buttons("contact"))
+    await message.answer(
+        text="Для активации аккаунта, нажмите на кнопку в нижней панели.",
+        reply_markup=await ReplyButtonFabric.build_buttons("contact"),
+    )
 
 
 @command_router.message(UserFilter(), Command(GeneralCommands.PROFILE.value))
 async def profile_command(message: Message) -> None:
 
-    user_data: UserModel = await UserModelRepository().iam_created(tg_id=message.from_user.id)
+    user_data: UserModel = await UserModelRepository().iam_created(
+        tg_id=message.from_user.id
+    )
     user_data = user_data[0]
 
     user_photo = await bot.get_user_profile_photos(user_id=user_data.tg_id)
 
     await message.answer_photo(
         photo=user_photo.photos[0][0].file_id,
-        caption=(f"\n\n<b>Мой профиль</b> \n\n\n" +
-              f"🧑‍⚕ <b>Имя:</b> {user_data.user_name}\n\n"
-              f"📞  <b>Номер телефона:</b> {user_data.user_phone if user_data.user_phone else 'Отсутствует'}\n\n"
-              f"🧑‍⚕️ <b>Должность:</b> {user_data.post if user_data.post else 'Отсутствует'}\n\n"
-              f"⏰  <b>Дата вступления:</b> {user_data.date_start}"),
-        reply_markup=await InlineButtonFabric.build_buttons("profile")
+        caption=(
+            f"\n\n<b>Мой профиль</b> \n\n\n"
+            + f"🧑‍⚕ <b>Имя:</b> {user_data.user_name}\n\n"
+            f"📞  <b>Номер телефона:</b> {user_data.user_phone if user_data.user_phone else 'Отсутствует'}\n\n"
+            f"🧑‍⚕️ <b>Должность:</b> {user_data.post if user_data.post else 'Отсутствует'}\n\n"
+            f"⏰  <b>Дата вступления:</b> {user_data.date_start}"
+        ),
+        reply_markup=await InlineButtonFabric.build_buttons("profile"),
     )
 
 
@@ -174,7 +180,7 @@ async def query_to_commands(
 
             return await message.message.answer_photo(
                 photo=FSInputFile("src/static/img/memo-img.jpg"),
-                caption="<b>Слайд с контактами</b>"
+                caption="<b>Слайд с контактами</b>",
             )
         case "/info":
             return await message.message.edit_caption(
@@ -184,9 +190,7 @@ async def query_to_commands(
         case "/back":
             return await message.message.edit_caption(
                 caption=CommandsTextsEnum.START_COMMAND_MESSAGE.value,
-                reply_markup=await InlineButtonFabric.build_buttons(
-                    "general_tests"
-                )
+                reply_markup=await InlineButtonFabric.build_buttons("general_tests"),
             )
         case "_":
             return await message.answer(text="Опция не найдена..")

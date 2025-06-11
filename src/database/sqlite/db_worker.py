@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
     async_sessionmaker,
     AsyncEngine,
-    AsyncSession
+    AsyncSession,
 )
 
 
@@ -16,10 +16,7 @@ class DBWorker:
         url=DatabaseSettings().main_db_url,
     )
 
-    __session_maker = async_sessionmaker(
-        bind=__db,
-        class_=AsyncSession
-    )
+    __session_maker = async_sessionmaker(bind=__db, class_=AsyncSession)
 
     @classmethod
     async def get_session(cls) -> AsyncSession:

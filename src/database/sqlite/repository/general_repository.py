@@ -8,12 +8,14 @@ from src.database.sqlite.models import user_model, user_type_model, memo_model
 
 class GeneralRepository:
 
-    def __init__(self,
-                 model: Union[
-                     Type[user_model.UserModel],
-                     Type[user_type_model.UserTypeModel],
-                     Type[memo_model.MeetModel]
-                 ]):
+    def __init__(
+        self,
+        model: Union[
+            Type[user_model.UserModel],
+            Type[user_type_model.UserTypeModel],
+            Type[memo_model.MeetModel],
+        ],
+    ):
         self.session: AsyncSession = None
         self.model = model
 
@@ -63,7 +65,11 @@ class GeneralRepository:
     async def update(self, update_data_model) -> bool:
         try:
             self.session = await DBWorker.get_session()
-            stmt = update(self.model).where(self.model.id == update_data_model.id).values(await update_data_model.read_model())
+            stmt = (
+                update(self.model)
+                .where(self.model.id == update_data_model.id)
+                .values(await update_data_model.read_model())
+            )
             await self.session.execute(stmt)
             await self.session.commit()
             return True

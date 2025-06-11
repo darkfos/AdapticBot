@@ -16,16 +16,17 @@ async def message_handler(message: types.Message, state: FSMContext):
     if message.contact:
 
         # Сохраняем информацию о пользователе
-        user_data: Tuple[UserModel] = await UserModelRepository().get_one(id_=int(message.from_user.id))
+        user_data: Tuple[UserModel] = await UserModelRepository().get_one(
+            id_=int(message.from_user.id)
+        )
 
         if user_data:
             user_data = user_data[0]
 
         if not user_data:
-            user_data: UserModel = (await UserModelRepository().find_by_phone(
+            user_data: UserModel = await UserModelRepository().find_by_phone(
                 phone_number=message.contact.phone_number
-            ))
-
+            )
 
         if user_data:
 
@@ -38,13 +39,13 @@ async def message_handler(message: types.Message, state: FSMContext):
             if is_updated:
                 await message.answer(
                     text="Отлично, номер телефона был обновлен!",
-                    reply_markup=ReplyKeyboardRemove()
+                    reply_markup=ReplyKeyboardRemove(),
                 )
                 return
 
             await message.answer(
                 text="Не удалось обновить ваш номер телефона",
-                reply_markup=ReplyKeyboardRemove()
+                reply_markup=ReplyKeyboardRemove(),
             )
 
         if user_data:
@@ -59,22 +60,22 @@ async def message_handler(message: types.Message, state: FSMContext):
                     if state.get_value("new_user_phone"):
                         await message.answer(
                             text="Отлично, номер телефона был обновлен!",
-                            reply_markup=ReplyKeyboardRemove()
+                            reply_markup=ReplyKeyboardRemove(),
                         )
                     else:
                         await message.answer(
                             text=f"Отлично, {message.from_user.first_name} теперь вам доступен профиль!",
-                            reply_markup=ReplyKeyboardRemove()
+                            reply_markup=ReplyKeyboardRemove(),
                         )
 
                 return
 
             await message.answer(
                 text=f"Вы {message.from_user.first_name} уже подвердили свой аккаунт",
-                reply_markup=ReplyKeyboardRemove()
+                reply_markup=ReplyKeyboardRemove(),
             )
 
         await message.answer(
             text="Не удалось обновить ваш номер телефона",
-            reply_markup=ReplyKeyboardRemove()
+            reply_markup=ReplyKeyboardRemove(),
         )

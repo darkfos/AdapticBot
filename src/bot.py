@@ -37,7 +37,9 @@ class TelegramBot:
         :return:
         """
 
-        self.__dispatcher.include_routers(command_router, user_profile_router, admin_router, message_router)
+        self.__dispatcher.include_routers(
+            command_router, user_profile_router, admin_router, message_router
+        )
 
     async def set_configs(self) -> None:
         """

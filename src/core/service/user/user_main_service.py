@@ -24,7 +24,7 @@ async def profile_buttons_menu(callback_data: CallbackQuery, state: FSMContext) 
             await state.set_state(UpdateUserPhone.new_user_phone)
             await callback_data.message.answer(
                 text="Отлично, нажмите в нижней панели на кнопку, для отправки номера телефона",
-                reply_markup=await ReplyButtonFabric.build_buttons("contact")
+                reply_markup=await ReplyButtonFabric.build_buttons("contact"),
             )
         case "profile_meets":
             user_meets_data = await user_meets.get_data(MeetModelRepository())
@@ -44,7 +44,7 @@ async def profile_buttons_menu(callback_data: CallbackQuery, state: FSMContext) 
                     f"📅 <b>Дата</b>: {user_meets_data[0].date_meeting}\n\n"
                     f"📑 <b>Описание встречи</b>: {user_meets_data[0].description[:25]}...\n\n"
                     f"📚 <b><i>Количество актуальных встреч: {user_meets_data[-1]}</i></b>",
-                    reply_markup=user_meets_data[1]
+                    reply_markup=user_meets_data[1],
                 )
             else:
                 await callback_data.message.answer(
@@ -52,18 +52,26 @@ async def profile_buttons_menu(callback_data: CallbackQuery, state: FSMContext) 
                     f"🧑‍ <b>С кем</b>: {user_meets_data[0].user_who_data.user_name}\n"
                     f"📅 <b>Дата</b>: {user_meets_data[0].date_meeting}\n"
                     f"📑 <b>Описание встречи</b>: {user_meets_data[0].description[:25]}...",
-                    reply_markup=user_meets_data[1]
+                    reply_markup=user_meets_data[1],
                 )
 
         case _:
             if "description" in callback_data.data:
-                meet_data = await MeetModelRepository().get_one(id_=int(callback_data.data.split("_")[-1]))
+                meet_data = await MeetModelRepository().get_one(
+                    id_=int(callback_data.data.split("_")[-1])
+                )
                 if meet_data:
-                    await callback_data.message.answer(text="Описание: \n" + meet_data[0].description)
+                    await callback_data.message.answer(
+                        text="Описание: \n" + meet_data[0].description
+                    )
                 else:
-                    await callback_data.message.answer(text="Не удалось загрузить описание")
+                    await callback_data.message.answer(
+                        text="Не удалось загрузить описание"
+                    )
             if "next" in callback_data.data:
-                user_meets_data = await user_meets.get_next(MeetModelRepository(), int(callback_data.data.split("_")[-1]))
+                user_meets_data = await user_meets.get_next(
+                    MeetModelRepository(), int(callback_data.data.split("_")[-1])
+                )
 
                 header_message = await is_admin(callback_data.from_user.id)
                 if header_message:
@@ -75,7 +83,7 @@ async def profile_buttons_menu(callback_data: CallbackQuery, state: FSMContext) 
                         f"📅 <b>Дата</b>: {user_meets_data[0].date_meeting}\n\n"
                         f"📑 <b>Описание встречи</b>: {user_meets_data[0].description[:25]}...\n\n"
                         f"📚 <b><i>Количество актуальных встреч: {user_meets_data[-1]}</i></b>",
-                        reply_markup=user_meets_data[1]
+                        reply_markup=user_meets_data[1],
                     )
                 else:
                     await callback_data.message.edit_text(
@@ -83,11 +91,13 @@ async def profile_buttons_menu(callback_data: CallbackQuery, state: FSMContext) 
                         f"🧑‍ <b>С кем</b>: {user_meets_data[0].user_who_data.user_name}\n"
                         f"📅 <b>Дата</b>: {user_meets_data[0].date_meeting}\n"
                         f"📑 <b>Описание встречи</b>: {user_meets_data[0].description[:25]}...",
-                        reply_markup=user_meets_data[1]
+                        reply_markup=user_meets_data[1],
                     )
 
             elif "back" in callback_data.data:
-                user_meets_data = await user_meets.get_previously(MeetModelRepository(), int(callback_data.data.split("_")[-1]))
+                user_meets_data = await user_meets.get_previously(
+                    MeetModelRepository(), int(callback_data.data.split("_")[-1])
+                )
 
                 header_message = await is_admin(callback_data.from_user.id)
                 if header_message:
@@ -99,7 +109,7 @@ async def profile_buttons_menu(callback_data: CallbackQuery, state: FSMContext) 
                         f"📅 <b>Дата</b>: {user_meets_data[0].date_meeting}\n\n"
                         f"📑 <b>Описание встречи</b>: {user_meets_data[0].description[:25]}...\n\n"
                         f"📚 <b><i>Количество актуальных встреч: {user_meets_data[-1]}</i></b>",
-                        reply_markup=user_meets_data[1]
+                        reply_markup=user_meets_data[1],
                     )
                 else:
                     await callback_data.message.edit_text(
@@ -107,5 +117,5 @@ async def profile_buttons_menu(callback_data: CallbackQuery, state: FSMContext) 
                         f"🧑‍ <b>С кем</b>: {user_meets_data[0].user_who_data.user_name}\n"
                         f"📅 <b>Дата</b>: {user_meets_data[0].date_meeting}\n"
                         f"📑 <b>Описание встречи</b>: {user_meets_data[0].description[:25]}...",
-                        reply_markup=user_meets_data[1]
+                        reply_markup=user_meets_data[1],
                     )

@@ -5,6 +5,8 @@ from src.enums.texts.errors import ErrosTextEnum
 from src.enums.texts.configuration import ConfigurationTextEnum
 
 __all__: List[Any] = [
-    CommandsTextsEnum, GeneralCommands,
-    ErrosTextEnum, CommandsTextsEnum
+    CommandsTextsEnum,
+    GeneralCommands,
+    ErrosTextEnum,
+    CommandsTextsEnum,
 ]

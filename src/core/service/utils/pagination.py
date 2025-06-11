@@ -24,11 +24,15 @@ class Pagination:
 
         inline_builder = InlineKeyboardBuilder()
 
-        if (self.page < len(self.meets)-1):
+        if self.page < len(self.meets) - 1:
             inline_builder.add(
                 InlineKeyboardButton(
                     text="Дальше ->",
-                    callback_data="profile_page_next_" + str(self.page+1) if isinstance(model, MeetModelRepository) else "persona_page_next_" + str(self.page+1)
+                    callback_data=(
+                        "profile_page_next_" + str(self.page + 1)
+                        if isinstance(model, MeetModelRepository)
+                        else "persona_page_next_" + str(self.page + 1)
+                    ),
                 )
             )
 
@@ -36,11 +40,17 @@ class Pagination:
             inline_builder.row(
                 InlineKeyboardButton(
                     text="Подробнее",
-                    callback_data="profile_page_description_" + str(self.meets[self.page].id)
+                    callback_data="profile_page_description_"
+                    + str(self.meets[self.page].id),
                 )
             )
 
-        return (self.meets[self.page], inline_builder.as_markup(), self.page+1, len(self.meets))
+        return (
+            self.meets[self.page],
+            inline_builder.as_markup(),
+            self.page + 1,
+            len(self.meets),
+        )
 
     async def get_next(self, model, page):
         if isinstance(model, UserModelRepository):
@@ -51,19 +61,27 @@ class Pagination:
 
         inline_builder = InlineKeyboardBuilder()
 
-        if (page < len(self.meets)-1):
+        if page < len(self.meets) - 1:
             inline_builder.add(
                 InlineKeyboardButton(
                     text="Дальше ->",
-                    callback_data="profile_page_next_" + str(page+1) if isinstance(model, MeetModelRepository) else "persona_page_next_" + str(page+1)
+                    callback_data=(
+                        "profile_page_next_" + str(page + 1)
+                        if isinstance(model, MeetModelRepository)
+                        else "persona_page_next_" + str(page + 1)
+                    ),
                 )
             )
 
-        if (page > 0):
+        if page > 0:
             inline_builder.add(
                 InlineKeyboardButton(
                     text="<- Обратно",
-                    callback_data="profile_page_back_" + str(page-1) if isinstance(model, MeetModelRepository) else "persona_page_next_" + str(page-1)
+                    callback_data=(
+                        "profile_page_back_" + str(page - 1)
+                        if isinstance(model, MeetModelRepository)
+                        else "persona_page_next_" + str(page - 1)
+                    ),
                 )
             )
 
@@ -71,11 +89,12 @@ class Pagination:
             inline_builder.row(
                 InlineKeyboardButton(
                     text="Подробнее",
-                    callback_data="profile_page_description_" + str(self.meets[page].id)
+                    callback_data="profile_page_description_"
+                    + str(self.meets[page].id),
                 )
             )
 
-        return (self.meets[page], inline_builder.as_markup(), page+1, len(self.meets))
+        return (self.meets[page], inline_builder.as_markup(), page + 1, len(self.meets))
 
     async def get_previously(self, model, page):
 
@@ -86,19 +105,27 @@ class Pagination:
         self.meets = all_data
         inline_builder = InlineKeyboardBuilder()
 
-        if (page < len(self.meets)-1):
+        if page < len(self.meets) - 1:
             inline_builder.add(
                 InlineKeyboardButton(
                     text="Дальше ->",
-                    callback_data="profile_page_next_" + str(page+1) if isinstance(model, MeetModelRepository) else "persona_page_next_" + str(page+1)
+                    callback_data=(
+                        "profile_page_next_" + str(page + 1)
+                        if isinstance(model, MeetModelRepository)
+                        else "persona_page_next_" + str(page + 1)
+                    ),
                 )
             )
 
-        if (page > 0):
+        if page > 0:
             inline_builder.add(
                 InlineKeyboardButton(
                     text="<- Обратно",
-                    callback_data="profile_page_back_" + str(page-1) if isinstance(model, MeetModelRepository) else "persona_page_back_" + str(page+1)
+                    callback_data=(
+                        "profile_page_back_" + str(page - 1)
+                        if isinstance(model, MeetModelRepository)
+                        else "persona_page_back_" + str(page + 1)
+                    ),
                 )
             )
 
@@ -106,8 +133,9 @@ class Pagination:
             inline_builder.row(
                 InlineKeyboardButton(
                     text="Подробнее",
-                    callback_data="profile_page_description_" + str(self.meets[page].id)
+                    callback_data="profile_page_description_"
+                    + str(self.meets[page].id),
                 )
             )
 
-        return (self.meets[page], inline_builder.as_markup(), page+1, len(self.meets))
+        return (self.meets[page], inline_builder.as_markup(), page + 1, len(self.meets))
