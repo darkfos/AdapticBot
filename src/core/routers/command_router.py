@@ -29,6 +29,7 @@ bot: Bot = Bot(token=TelegramBotSettings().telegram_bot_token)
 command_router: Router = Router(name="commands")
 
 
+@command_router.my_chat_member()
 @command_router.message(CommandStart())
 async def start_command(message: Message) -> None:
     """
