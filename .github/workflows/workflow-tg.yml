@@ -3,14 +3,14 @@ name: Analitics code
 on:
   push:
     branches: ["main", "dev"]
-  pull-request:
-    breanches: ["main", "dev"]
+  pull_request:
+    branches: ["main", "dev"]
 
 jobs:
   linter:
     runs-on: ubuntu-latest
     steps:
-      - name: Install dependecies
+      - name: Install dependencies
         uses: actions/checkout@v4
       - name: Install python
         uses: actions/setup-python@v4
@@ -20,3 +20,15 @@ jobs:
         run: pip3 install flake8
       - name: Check code
         run: flake8 .
+  deploy:
+    if: github.ref == "refs/heads/main"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install sshpass
+        run: sudo apt-get install -y sshpass
+      - name: Deploying
+        env:
+          SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
+        run: |
+          sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_LOGIN }}@${{ secrets.SERVER_HOST }} "cd AdapticBot && git pull && sudo docker compose up -d --build" 
