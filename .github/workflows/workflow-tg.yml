@@ -30,5 +30,13 @@ jobs:
       - name: Deploying
         env:
           SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
+          LOGIN_HUB: ${{ secrets.LOGIN_HUB }}
+          PASSWORD_HUB: ${{ secrets.PASSWORD_HUB }}
         run: |
-          sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_LOGIN }}@${{ secrets.SERVER_HOST }} "cd AdapticBot && git pull && sudo docker system prune -a && docker login -u ${{ secrets.LOGIN_HUB }} -p ${{ secrets.PASSWORD_HUB }} && sudo docker compose up -d --build" 
+          sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_LOGIN }}@${{ secrets.SERVER_HOST }} '
+            cd AdapticBot &&
+            git pull &&
+            sudo docker system prune -a -f &&
+            echo "$PASSWORD_HUB" | docker login -u "$LOGIN_HUB" --password-stdin &&
+            sudo docker compose up -d --build
+          ' 
