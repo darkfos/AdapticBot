@@ -33,10 +33,10 @@ jobs:
           LOGIN_HUB: ${{ secrets.LOGIN_HUB }}
           PASSWORD_HUB: ${{ secrets.PASSWORD_HUB }}
         run: |
-          sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_LOGIN }}@${{ secrets.SERVER_HOST }} '
+          sshpass -p "${{ secrets.SERVER_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_LOGIN }}@${{ secrets.SERVER_HOST }} "
             cd AdapticBot &&
             git pull &&
             sudo docker system prune -a -f &&
-            echo "$PASSWORD_HUB" | docker login -u "$LOGIN_HUB" --password-stdin &&
+            echo '${{ secrets.PASSWORD_HUB }}' | docker login -u '${{ secrets.LOGIN_HUB }}' --password-stdin &&
             sudo docker compose up -d --build
-          ' 
+          "
