@@ -34,6 +34,7 @@ async def send_notification(
         if date_now > meet.date_meeting:
             return await MeetModelRepository().delete(id_=meet.id)
 
+        print(date_now, meet)
         if not meet.date_last_meeting:
             await _send_notification(meet)
             return
@@ -61,6 +62,7 @@ async def _send_notification(
     """
     Функция для отправки уведомления
     """
+
     user_who_data = (await UserModelRepository().get_one(meet.id_who))[0]
     user_with_data = (await UserModelRepository().get_one(meet.id_with))[0]
 

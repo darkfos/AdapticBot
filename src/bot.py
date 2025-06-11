@@ -16,7 +16,6 @@ from src.core.configurations import (
     set_chat_menu_buttons,
     set_bot_name,
 )
-from src.core.middleware import SpamMiddleware
 from src.core.configurations import BotGeneralSettings as gs
 
 
@@ -38,9 +37,6 @@ class TelegramBot:
         :return:
         """
 
-        self.__dispatcher.message.middleware.register(
-            SpamMiddleware(seconds=0.3)
-        )  # noqa
         self.__dispatcher.include_routers(command_router, user_profile_router, admin_router, message_router)
 
     async def set_configs(self) -> None:
