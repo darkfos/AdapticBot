@@ -43,12 +43,8 @@ def upgrade() -> None:
         ),
         sa.PrimaryKeyConstraint("id"),
     )
-    op.create_index(
-        op.f("ix_usermodel_post"), "usermodel", ["post"], unique=False
-    )
-    op.create_index(
-        op.f("ix_usermodel_tg_id"), "usermodel", ["tg_id"], unique=False
-    )
+    op.create_index(op.f("ix_usermodel_post"), "usermodel", ["post"], unique=False)
+    op.create_index(op.f("ix_usermodel_tg_id"), "usermodel", ["tg_id"], unique=False)
     op.create_index(
         op.f("ix_usermodel_user_phone"),
         "usermodel",

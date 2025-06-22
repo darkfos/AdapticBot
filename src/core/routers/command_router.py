@@ -28,7 +28,7 @@ bot: Bot = Bot(token=TelegramBotSettings().telegram_bot_token)
 command_router: Router = Router(name="commands")
 
 
-@command_router.message(CommandStart(), F.chat.type.in_({ChatType.GROUP, ChatType.SUPERGROUP, ChatType.PRIVATE}))
+@command_router.message(F.chat.type.in_({ChatType.GROUP, ChatType.SUPERGROUP, ChatType.PRIVATE}), CommandStart())
 async def start_command(message: Message) -> None:
     """
     Start command
@@ -45,7 +45,7 @@ async def start_command(message: Message) -> None:
     await message.chat.pin_message(start_message.message_id)
 
 
-@command_router.message(Command(GeneralCommands.HELP.value), F.chat.type.in_({ChatType.GROUP, ChatType.SUPERGROUP, ChatType.PRIVATE}))
+@command_router.message(F.chat.type.in_({ChatType.GROUP, ChatType.SUPERGROUP, ChatType.PRIVATE}), Command(GeneralCommands.HELP.value))
 async def help_command(message: Message) -> None:
     """
     Help command
@@ -59,7 +59,7 @@ async def help_command(message: Message) -> None:
     )
 
 
-@command_router.message(Command(GeneralCommands.INFO.value), F.chat.type.in_({ChatType.GROUP, ChatType.SUPERGROUP, ChatType.PRIVATE}))
+@command_router.message(F.chat.type.in_({ChatType.GROUP, ChatType.SUPERGROUP, ChatType.PRIVATE}), Command(GeneralCommands.INFO.value))
 async def info_command(message: Message) -> None:
     """
     Info command
@@ -74,7 +74,7 @@ async def info_command(message: Message) -> None:
     )
 
 
-@command_router.message(Command(GeneralCommands.MEMO.value), F.chat.type.in_({ChatType.GROUP, ChatType.SUPERGROUP, ChatType.PRIVATE}))
+@command_router.message(F.chat.type.in_({ChatType.GROUP, ChatType.SUPERGROUP, ChatType.PRIVATE}), Command(GeneralCommands.MEMO.value))
 async def memo_command(message: Message) -> None:
     """
     Memo command
@@ -87,7 +87,7 @@ async def memo_command(message: Message) -> None:
     await message.answer_photo(photo=photo_memo, caption="<b>Памятка сотруднику</b>")
 
 
-@command_router.message(Command(GeneralCommands.CLEAR.value), F.chat.type.in_({ChatType.GROUP, ChatType.SUPERGROUP, ChatType.PRIVATE}))
+@command_router.message(Command(GeneralCommands.CLEAR.value))
 async def clear_command(message: Message, state: FSMContext) -> None:
     """
     Clear command
@@ -124,7 +124,7 @@ async def admin_command(message: Message) -> None:
         await message.answer(text="Доступ к админ панели запрещен.")
 
 
-@command_router.message(Command(GeneralCommands.SUCCESS.value), F.chat.type.in_({ChatType.GROUP, ChatType.SUPERGROUP, ChatType.PRIVATE}))
+@command_router.message(F.chat.type.in_({ChatType.GROUP, ChatType.SUPERGROUP, ChatType.PRIVATE}), Command(GeneralCommands.SUCCESS.value))
 async def success_persona(message: Message) -> None:
     await message.answer(
         text="Для активации аккаунта, нажмите на кнопку в нижней панели.",
@@ -155,7 +155,7 @@ async def profile_command(message: Message) -> None:
     )
 
 
-@command_router.callback_query(F.data.startswith("/"), F.chat.type.in_({ChatType.GROUP, ChatType.SUPERGROUP, ChatType.PRIVATE}))
+@command_router.callback_query(F.data.startswith("/"))
 async def query_to_commands(
     message: CallbackQuery,
 ) -> Union[EditMessageText, AnswerCallbackQuery]:
@@ -164,6 +164,8 @@ async def query_to_commands(
     :param message:
     :return:
     """
+
+    print(message)
 
     match message.data:
         case "/start":
